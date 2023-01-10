@@ -21,34 +21,31 @@ pkg.env$allocate_shit_aggregate_file <- "processed_data/Assignment_Shift_Aggrega
 {
   beds.frame <- read.csv(glue("{pkg.env$raw_folder}/JP Beds by Date.csv"))
   colnames(beds.frame) <- c("Index", "Ward", "Effective From", "Beds")
-  
-  pkg.env$beds.frame <- beds.frame %>% 
-    dplyr::select(-Index) %>% 
+
+  pkg.env$beds.frame <- beds.frame %>%
+    dplyr::select(-Index) %>%
     dplyr::mutate(
-      `Effective From` = as.Date(`Effective From`, format="%d/%m/%Y")
+      `Effective From` = as.Date(`Effective From`, format = "%d/%m/%Y")
     )
 }
 
 pkg.env$default_functions <- list(
-  "Mean" = function(i) mean(i, na.rm=T),
-  "Na Ratio" = function(i) sum(is.na(i)) / length(i), 
-  "Var" = function(i) var(i, na.rm=T),
+  "Mean" = function(i) mean(i, na.rm = T),
+  "Na Ratio" = function(i) sum(is.na(i)) / length(i),
+  "Var" = function(i) var(i, na.rm = T),
   ".N." = length
 )
 
 pkg.env$all.months <- head(
-  seq(pkg.env$start.date.inclusive, pkg.env$end.date.exclusive, by="month"), 
+  seq(pkg.env$start.date.inclusive, pkg.env$end.date.exclusive, by = "month"),
   -1
 )
 
 sickness.months <- seq(
-  pkg.env$start.date.inclusive %m-% months(12), 
-  pkg.env$end.date.exclusive, 
-  by="month"
+  pkg.env$start.date.inclusive %m-% months(12),
+  pkg.env$end.date.exclusive,
+  by = "month"
 )
 
 pkg.env$month.starts <- head(sickness.months, -1)
 pkg.env$month.ends <- tail(sickness.months, -1) %m-% days(1)
-
-
-

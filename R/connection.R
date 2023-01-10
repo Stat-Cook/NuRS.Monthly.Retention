@@ -4,20 +4,20 @@
 # Tag:Key
 
 
-credential.prompt <- function(){
+credential.prompt <- function() {
   #' Ask user for SQL credentials
-  #' 
+  #'
   #' @importFrom keyring key_set
   #' @export
   key_set("db_credentials_UID", prompt = "NuRS database username: ")
   key_set("db_credentials_PWD", prompt = "NuRS database password: ")
-  
+
   pkg.env$con <- open.connection()
 }
 
-open.connection <- function() { 
+open.connection <- function() {
   #' Generate a DBI connection object
-  #' 
+  #'
   #' @importFrom odbc odbc dbConnect
   #' @export
   dm <- tryCatch(
@@ -35,8 +35,6 @@ open.connection <- function() {
     UID = dm$UID,
     PWD = dm$PWD
   )
-  
+
   con
 }
-
-

@@ -2,16 +2,16 @@
 # Tag:SNCT
 
 
-acuity.score.f <- function(L0, L1A, L1B, L2, L3) {
+acuity_score_f <- function(l0, l1a, l1b, l2, l3) {
   #' Calculate a weighted acuity score using the SNCT multipliers.
-  L0 * 0.99 + L1A * 1.39 + L1B * 1.72 + L2 * 1.97 + L3 * 5.96
+  l0 * 0.99 + l1a * 1.39 + l1b * 1.72 + l2 * 1.97 + l3 * 5.96
 }
 
-acuity.score <- Vectorize(acuity.score.f)
+acuity_score <- Vectorize(acuity_score_f)
 
 
-make.monthly.acuity <- function(sql.table = "jpuh_AllocateAcuity",
-                                fn = pkg.env$default_functions) {
+make_monthly_acuity <- function(sql_table = "jpuh_AllocateAcuity",
+                                fn = pkg_env$default_functions) {
   #' Monthly Acuity data summary
   #'
   #' Steps:
@@ -21,7 +21,8 @@ make.monthly.acuity <- function(sql.table = "jpuh_AllocateAcuity",
   #' 4. Fill in missing values from remaining cases with zero.
   #' 5. Add bed sizes.
   #' 6. Calculate Acuity frequencies per bed and Acuity Score (SNCT multipliers)
-  #' 7. Calculate aggregate metrics (Defaults: mean, var, Na ratio) at lag periods
+  #' 7. Calculate aggregate metrics
+  #'   (Defaults: mean, var, Na ratio) at lag periods
   #' 8. Save to file
   #'
   #' @param sql.table Name of relevant sql table
@@ -31,39 +32,48 @@ make.monthly.acuity <- function(sql.table = "jpuh_AllocateAcuity",
   #' @importFrom magrittr %>%
   #' @importFrom reshape2 dcast
   #' @import dplyr
+  #' @importFrom dplyr tbl collect mutate
   #'
-  allocate <- tbl(pkg.env$con, sql.table) %>%
-    filter(Name %like% "Level%") %>%
+  allocate <- tbl(pkg_env$con, sql_table) %>%
+    filter(.data$Name %like% "Level%") %>%
     collect() %>%
     mutate(
-      ValidDate = as.Date(ValidDate, format = "%d/%m/%y"),
-      Ward = Unit
+      ValidDate = as.Date(.data$ValidDate, format = "%d/%m/%y"),
+      Ward = .data$Unit
     )
 
-  pivoted.allocate <- allocate %>%
-    dcast(Ward + ValidDate + CensusPeriod ~ Name, value.var = "Count") # Ward - Day - Shift
+  pivoted_allocate <- allocate %>%
+    dcast(
+      Ward + ValidDate + CensusPeriod ~ Name,
+      value.var = "Count"
+    ) # Ward - Day - Shift
+
+  acu_levels <- c("Level 0", "Level 1A", "Level 1B", "Level 2", "Level 3")
 
   sel <- apply(
-    is.na(pivoted.allocate[, c("Level 0", "Level 1A", "Level 1B", "Level 2", "Level 3")]),
+    is.na(pivoted_allocate[, acu_levels]),
     1,
     all
   )
 
-  pivoted.allocate.some.entered <- pivoted.allocate[!sel, ]
-  pivoted.allocate.all <- pivoted.allocate
+  pivoted_allocate_some_entered <- pivoted_allocate[!sel, ]
+  # pivoted.allocate.all <- pivoted_allocate
 
-  pivoted.allocate.some.entered[is.na(pivoted.allocate.some.entered)] <- 0
+  pivoted_allocate_some_entered[is.na(pivoted_allocate_some_entered)] <- 0
 
-  pivoted.allocate.some.entered <- pivoted.allocate.some.entered %>% mutate(
-    `Acuity Score` = acuity.score(`Level 0`, `Level 1A`, `Level 1B`, `Level 2`, `Level 3`)
+  pivoted_allocate_some_entered <- pivoted_allocate_some_entered %>% mutate(
+    `Acuity Score` = acuity_score(
+      .data$`Level 0`, .data$`Level 1A`, .data$`Level 1B`, 
+      .data$`Level 2`, .data$`Level 3`
+      )
   )
 
-  pivoted.allocate.some.entered <- add.bed.size.all(
-    pivoted.allocate.some.entered,
+  pivoted_allocate_some_entered <- add_bed.size.all(
+    pivoted_allocate_some_entered,
     "ValidDate"
   )
 
-  pivoted.allocate.some.entered.per.bed <- pivoted.allocate.some.entered %>%
+  pivoted.allocate.some.entered.per.bed <- pivoted_allocate_some_entered %>%
     mutate(
       across(
         contains("Level"),

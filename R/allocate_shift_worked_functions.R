@@ -22,14 +22,13 @@ shift_worked_table <- function(.year) {
   glue("JPUH_Allocate_Shifts_Worked_Demographics_Combined_{.year}_tsv")
 }
 
-fetch_sw <- function(.year, .con = pkg.env$con) {
+fetch_sw <- function(.year, .con = pkg_env$con) {
   #' Get shifts workled data by year
   #'
   #' @param .year Year of data to be querried
   #' @param .con SQL engine connection
   #' @importFrom dplyr mutate
   #'
-  #' @param .year
   tbl.string <- as.character(shift_worked_table(.year))
   sql.query <- tbl(
     .con,

@@ -6,7 +6,7 @@ load.pas.data <- function(sql.table = "pas_wardstays") {
   #' Read pas ward stay data
   #'
   #' @param sql.table PAS table name in sql engine
-  pas.ws <- tbl(pkg.env$con, sql.table) %>%
+  pas.ws <- tbl(pkg_env$con, sql.table) %>%
     collect()
   colnames(pas.ws) <- c(
     "Hospital_Provider_Spell_No", "PatientID",
@@ -35,13 +35,13 @@ make.admissions.discharges <- function(sql.table = "pas_wardstays") {
     filter(Ward %in% names(pas_to_allocate_list)) %>% #
     mutate(Ward = pas_to_allocate(Ward)) %>%
     mutate(StartDate = as.Date(`StartDate`)) %>%
-    add.bed.size.all("StartDate")
+    add_bed_size_all("StartDate")
 
   pas.end.frame <- pas.ws %>%
     filter(Ward %in% names(pas_to_allocate_list)) %>% #
     mutate(Ward = pas_to_allocate(Ward)) %>%
     mutate(EndDate = as.Date(`EndDate`)) %>%
-    add.bed.size.all("EndDate")
+    add_bed_size_all("EndDate")
 
   pas.start.end.f <- function(window) {
     pas.start <- pas.start.frame %>%
@@ -79,7 +79,7 @@ make.ward.occupancy <- function(sql.table = "pas_wardstays") {
 
   pas.with.beds <- pas.monthly %>%
     mutate(`Period Start` = as.Date(`Period Start`)) %>%
-    add.bed.size.all("Period Start")
+    add_bed_size_all("Period Start")
 
   pas.per.bed <- pas.with.beds %>%
     mutate(

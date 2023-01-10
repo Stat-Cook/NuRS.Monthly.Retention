@@ -57,7 +57,7 @@ to.chunks <- function(data, chunk.size = 1e4) {
 }
 
 
-fetch.swd <- function(year, .con = pkg.env$con) {
+fetch.swd <- function(year, .con = pkg_env$con) {
   #' Get shifts worked data for a given year, and mark where values are missing due to
   #' scrambler
   #'

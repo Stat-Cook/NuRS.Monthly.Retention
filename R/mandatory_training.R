@@ -2,7 +2,7 @@
 # Tag:MandatoryTraining
 
 make.monthly.mand.training <- function(table = "jpuh_ESR_Mandatory_Training_2",
-                                       fn = pkg.env$default_functions) {
+                                       fn = pkg_env$default_functions) {
   #'
   #' Steps:
   #' 1. Calculate Expiring soon %
@@ -12,7 +12,7 @@ make.monthly.mand.training <- function(table = "jpuh_ESR_Mandatory_Training_2",
   #' @importFrom magrittr %>%
   #'
 
-  mt <- tbl(pkg.env$con, table) %>% collect()
+  mt <- tbl(pkg_env$con, table) %>% collect()
 
   mt <- mt %>% mutate(
     Ward = esr_to_allocate(Organisation),

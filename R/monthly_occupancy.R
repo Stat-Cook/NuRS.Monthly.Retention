@@ -7,7 +7,7 @@ get.pas.file <- function() {
   #'
   #' @importFrom magrittr %>%
 
-  pas.file <- pkg.env$pas.file
+  pas.file <- pkg_env$pas.file
 
   if (!file.exists(pas.file)) {
     pas.ws <- tbl(con, "pas_wardstays") %>% collect()

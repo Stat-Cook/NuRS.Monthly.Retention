@@ -6,7 +6,7 @@ get.est.file <- function() {
   #'
   #' @export
 
-  est.file <- pkg.env$est.file
+  est.file <- pkg_env$est.file
 
   if (!file.exists(est.file)) {
     est <- lapply(2015:2020, get.establishment)

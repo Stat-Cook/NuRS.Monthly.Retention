@@ -1,6 +1,6 @@
 
 
-add.bed.size <- function(data, date.column, ward) {
+add_bed_size <- function(data, date.column, ward) {
   #' Add 'bed size' to data set
   #'
   #' Add a column listing number of beds a ward has to a data set -
@@ -10,13 +10,13 @@ add.bed.size <- function(data, date.column, ward) {
   #' @param date.column Name of the 'Date' reference column in data
   #' @param ward Name of a ward (string)
   #'
-  ward.beds <- pkg.env$beds.frame %>% filter(Ward == ward)
+  ward.beds <- pkg_env$beds.frame %>% filter(Ward == ward)
   merge.on.last(data, ward.beds, date.column, `Effective From`) %>%
     select(-Ward)
 }
 
 
-add.bed.size.ws <- function(data, date.column, ward) {
+add_bed_size_ws <- function(data, date.column, ward) {
   #' Add 'bed size' to data set
   #'
   #' Add a column listing number of beds a ward has to a data set -
@@ -26,14 +26,14 @@ add.bed.size.ws <- function(data, date.column, ward) {
   #' @param date.column Name of the 'Date' reference column in data
   #' @param ward Name of a ward (string)
   #'
-  ward.beds <- pkg.env$beds.frame %>%
+  ward.beds <- pkg_env$beds.frame %>%
     filter(Ward == ward) %>%
     mutate(`Effective From` = as.POSIXct(`Effective From`))
   merge.on.last(data, ward.beds, {{ date.column }}, `Effective From`) %>%
     select(-Ward)
 }
 
-add.bed.size.all <- function(data, date.column) {
+add_bed_size_all <- function(data, date.column) {
   #' Add 'bed size' to data set
   #'
   #' Add a column listing number of beds a ward has to a data set -
@@ -45,11 +45,11 @@ add.bed.size.all <- function(data, date.column) {
   data %>%
     group_by(Ward) %>%
     group_modify(
-      function(data, grp) add.bed.size(data, {{ date.column }}, grp$Ward)
+      function(data, grp) add_bed_size(data, {{ date.column }}, grp$Ward)
     )
 }
 
-add.bed.size.all.ws <- function(data, date.column) {
+add_bed_size_all_ws <- function(data, date.column) {
   #' Add 'bed size' to data set
   #'
   #' Add a column listing number of beds a ward has to a data set -
@@ -62,6 +62,6 @@ add.bed.size.all.ws <- function(data, date.column) {
   data %>%
     group_by(Ward) %>%
     group_modify(
-      function(data, grp) add.bed.size.ws(data, {{ date.column }}, grp$Ward)
+      function(data, grp) add_bed_size_ws(data, {{ date.column }}, grp$Ward)
     )
 }

@@ -12,7 +12,7 @@ credential.prompt <- function() {
   key_set("db_credentials_UID", prompt = "NuRS database username: ")
   key_set("db_credentials_PWD", prompt = "NuRS database password: ")
 
-  pkg.env$con <- open.connection()
+  pkg_env$con <- open.connection()
 }
 
 open.connection <- function() {

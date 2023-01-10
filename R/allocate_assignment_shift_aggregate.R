@@ -63,7 +63,7 @@ make.assignment.shift.aggregate <- function(sql.table = "JPUH_Allocate_Assignmen
   #'
   #' @importFrom stringr str_detect
 
-  assignment <- tbl(pkg.env$con, sql.table) %>%
+  assignment <- tbl(pkg_env$con, sql.table) %>%
     collect() %>%
     mutate(Ward = `Unit Name`) %>%
     filter(Ward %in% esr_to_allocate_list)
@@ -126,6 +126,6 @@ make.assignment.shift.aggregate <- function(sql.table = "JPUH_Allocate_Assignmen
     ) %>%
     int.to.double()
 
-  assignment.shift.overlap %>% saveRDS(pkg.env$allocate_shit_aggregate_file)
+  assignment.shift.overlap %>% saveRDS(pkg_env$allocate_shit_aggregate_file)
   assignment.shift.overlap
 }

@@ -1,7 +1,7 @@
 # Tag:Allocate
 # Tag:Assignments
 
-make.monthly.assignment <- function(fn = pkg.env$default_functions) {
+make.monthly.assignment <- function(fn = pkg_env$default_functions) {
   #'
   #' Steps:
   #' 1. Limit analysis to shifts with at least one person in post.
@@ -11,11 +11,11 @@ make.monthly.assignment <- function(fn = pkg.env$default_functions) {
   #'
   #' @param fn List of aggregate metrics
   #' @export
-  if (!file.exists(pkg.env$allocate_shit_aggregate_file)) {
+  if (!file.exists(pkg_env$allocate_shit_aggregate_file)) {
     make.assignment.shift.aggregate()
   }
 
-  assignment.shift.overlap <- readRDS(pkg.env$allocate_shit_aggregate_file) %>%
+  assignment.shift.overlap <- readRDS(pkg_env$allocate_shit_aggregate_file) %>%
     mutate(
       Date = as.Date(Date)
     )
@@ -30,7 +30,7 @@ make.monthly.assignment <- function(fn = pkg.env$default_functions) {
 
   asssignment.shift.overlap <- assignment.shift.overlap[actual.total != 0, ]
 
-  assignment.shift.overlap.with.beds <- assignment.shift.overlap %>% add.bed.size.all("Date")
+  assignment.shift.overlap.with.beds <- assignment.shift.overlap %>% add_bed_size_all("Date")
 
   cols <- colnames(assignment.shift.overlap.with.beds)
   count.cols <- cols[str_detect(cols, "Count")]

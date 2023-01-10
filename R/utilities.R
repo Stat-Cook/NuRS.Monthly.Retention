@@ -12,8 +12,8 @@ make.folders <- function() {
   #' Create project folder structure if needed
   #' @export
 
-  dir.create(pkg.env$processed_folder)
-  dir.create(pkg.env$result_folder)
+  dir.create(pkg_env$processed_folder)
+  dir.create(pkg_env$result_folder)
 }
 
 process.across.f <- function(data, date.col,
@@ -154,7 +154,7 @@ all.ward.month.merge <- function(data) {
 
   month.ward.template <- expand.grid(
     Ward = unique(data$Ward),
-    Date = pkg.env$all.months
+    Date = pkg_env$all.months
   ) %>% data.frame()
 
   left_join(

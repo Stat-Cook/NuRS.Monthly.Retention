@@ -13,7 +13,7 @@ fetch_sw <- function(year) {
   allocate.wards <- unlist(esr_to_allocate_list)
 
   tbl(
-    pkg.env$con,
+    pkg_env$con,
     glue::glue("jpuh_Allocate_Shifts_Worked_Demographics_Combined_{year}")
   ) %>%
     filter(`Owning Unit` %in% allocate.wards) %>%
@@ -72,7 +72,7 @@ make.shifts.worked <- function() {
   sw.daily <- lapply(2015:2020, sw.daily.f) %>% do.call(rbind, .)
 
 
-  sw.daily.with.beds <- sw.daily %>% add.bed.size.all("Date")
+  sw.daily.with.beds <- sw.daily %>% add_bed_size_all("Date")
 
   sw.daily.per.bed <- sw.daily.with.beds %>%
     filter(!is.na(Beds)) %>%

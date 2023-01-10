@@ -40,8 +40,8 @@ actual.within.shift.var.per.mean.loop <- function(data, grid) {
   #'
   #' Converts from varaiance to variance per mean.
   #'
-  #' @param data
-  #' @param grid
+  #' @param data A data frame
+  #' @param grid A frame with headings `Window`, `Staff`, `Type`.
   #'
   #' @export
   for (i in 1:nrow(grid)) {
@@ -82,8 +82,8 @@ planned.between.shift.var.per.mean.loop <- function(data, grid) {
   #'
   #' Converts from varaiance to variance per mean.
   #'
-  #' @param data
-  #' @param grid
+  #' @param data A data frame
+  #' @param grid A frame with headings `Window`, `Staff`, `Type`.
   #'
   #' @export
   for (i in 1:nrow(grid)) {
@@ -104,8 +104,9 @@ acuity.var.features.f <- function(data, window, feature) {
   #'
   #' Converts from varaiance to variance per mean.
   #'
-  #' @param data
-  #' @param grid
+  #' @param data A data frame
+  #' @param window The lagged window of interest [str]
+  #' @param feature The type of variable to be used [str]
   #'
   #' @export
   var.col.string <- glue("Lag {window} {feature} per Bed Var")
@@ -125,8 +126,8 @@ acuity.var.features <- function(data, grid) {
   #'
   #' Converts from varaiance to variance per mean.
   #'
-  #' @param data
-  #' @param grid
+  #' @param data A data frame
+  #' @param grid A frame with fields `Window` and `Features`
   #'
   #' @export
   for (i in 1:nrow(grid)) {

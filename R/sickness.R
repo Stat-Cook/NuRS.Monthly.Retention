@@ -99,7 +99,7 @@ make.monthly.sickness <- function(sql.table = "jpuh_ESR_Sickness_processed") {
   #' @export
   #'
   #'
-  sick <- tbl(pkg.env$con, sql.table) %>%
+  sick <- tbl(pkg_env$con, sql.table) %>%
     select(Organisation, `Absence End Date`, `Absence Start Date`, `FTE Days Lost`) %>%
     collect() %>%
     mutate(
@@ -110,7 +110,7 @@ make.monthly.sickness <- function(sql.table = "jpuh_ESR_Sickness_processed") {
     ) %>%
     filter(Organisation %in% names(esr_to_allocate_list))
 
-  monthly.sickness <- sickness.windows(sick, pkg.env$month.starts, pkg.env$month.ends) %>%
+  monthly.sickness <- sickness.windows(sick, pkg_env$month.starts, pkg_env$month.ends) %>%
     mutate(Ward = esr_to_allocate(Organisation)) %>%
     add.establishment(`Month Starting`) %>%
     mutate(

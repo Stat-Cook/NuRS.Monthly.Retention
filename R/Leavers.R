@@ -8,7 +8,7 @@ get.leavers <- function(sql.table = LEAVERS.SQL.TABLE) {
   #'
   #' @param sql.table Name of data set in database
   #'
-  tbl(pkg.env$con, sql.table) %>%
+  tbl(pkg_env$con, sql.table) %>%
     collect() %>%
     mutate(
       `Termination Month` = as.Date(paste(`Termination Month`, "01", sep = "-")),

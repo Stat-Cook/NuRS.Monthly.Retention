@@ -1,3 +1,6 @@
+# Tag:Ulysses
+# Tag:Incident
+
 make.incident.data <- function(sql.table="jpuh_ulysses_IncidentFile"){
   #' Querry incident data
   #' 

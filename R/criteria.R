@@ -1,3 +1,6 @@
+# Tag:Inclusion
+# Tag:Exclusion
+
 inc.exc.criteria <- function(data)
   #' Apply exclusion criteria to data set
   #'

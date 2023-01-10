@@ -1,4 +1,9 @@
 #' Mappings to Allocate Ward names
+#' Tag:Lookup
+#' Tag:Allocate
+#' Tag:Ulysses
+#' Tag:ESR 
+#' Tag:PAS
 
 ulys_to_allocate_list <- list(
   'Charnwood Suite' = 'Charnwood',

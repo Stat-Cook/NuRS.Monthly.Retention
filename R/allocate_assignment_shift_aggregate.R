@@ -1,3 +1,6 @@
+# Tag:Allocate
+# Tag:Assignment
+
 
 status.f <- function(delta_reg, delta_unreg, delta_other){
   #' Determine shift status.

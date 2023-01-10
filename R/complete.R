@@ -1,3 +1,6 @@
+# Tag:Complete
+
+
 complete.f <- function(data){
   #' Check which rows of a data frame are complete
   #' 

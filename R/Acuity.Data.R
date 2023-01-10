@@ -1,3 +1,6 @@
+# Tag:Acuity
+# Tag:SNCT
+
 
 acuity.score.f <- function(L0, L1A, L1B, L2, L3){
   #' Calculate a weighted acuity score using the SNCT multipliers.

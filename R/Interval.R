@@ -1,3 +1,5 @@
+# Tag:Date
+
 truncate.start <- function(interval.start){
   function(vals) {
     data.table::fifelse(vals > interval.start, vals, interval.start)

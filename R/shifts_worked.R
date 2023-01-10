@@ -1,8 +1,15 @@
+# Tag:ShiftsWorked
+# Tag:Allocate
+
 sw_to_date <- function(values) lubridate::as_date(values, format="%d/%m/%Y")
 
 
 
 fetch_sw <- function(year){
+  
+  #' Query and clean Shifts Worked data 
+  #' 
+  #' @param year Numeric year of data to querry
   
   allocate.wards <- unlist(esr_to_allocate_list)
   
@@ -17,6 +24,11 @@ fetch_sw <- function(year){
 }
 
 sw.daily.f <- function(year) {
+  #' Query and convert shifts worked data set to a report of quantity of work 
+  #' done each day by each staff group
+  #'
+  #' @param year Numeric year of data to look up
+  
   s <- fetch_sw(year)
   
   daily.work <- s %>%
@@ -44,6 +56,9 @@ sw.daily.f <- function(year) {
 }
 
 sum.to.proportion <- function(data) {
+  #' Convert total work to proportion of work done by each staff group.
+  #' 
+  #' @param data A data frame
   data %>% 
     mutate(
       across(contains("sum(Total Work)")) / rowSums(across(contains("sum(Total Work)")))
@@ -52,6 +67,8 @@ sum.to.proportion <- function(data) {
 }
 
 make.shifts.worked <- function(){
+  #' Generate the shifts worked data sets (No Demographics)
+  #' 
   #' @export
   sw.daily <- lapply(2015:2020, sw.daily.f) %>% do.call(rbind, .)
 

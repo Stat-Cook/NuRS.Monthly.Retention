@@ -1,3 +1,6 @@
+# Tag:Leavers
+# Tag:Allocate
+
 LEAVERS.SQL.TABLE <- "JPUH_Leavers_Monthly_Frequencies_StaffGroup"
 
 get.leavers <- function(sql.table=LEAVERS.SQL.TABLE){

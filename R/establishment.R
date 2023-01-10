@@ -1,5 +1,8 @@
+# Tag:Allocate
+# Tag:Establishment
+
 get.establishment.by.year <- function(.year){
-  #' Generate monthly establihsment data sets 
+  #' Generate monthly establishment data sets 
   #' 
   #' @param .year Year of data to be processed
   #' 

@@ -1,3 +1,7 @@
+# Tag:PAS
+# Tag:WardStay
+# Tag:Occupancy
+
 load.pas.data <- function(sql.table= "pas_wardstays"){
   #' Read pas ward stay data
   #' 

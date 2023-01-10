@@ -1,3 +1,6 @@
+# Tag:Lag
+# Tag:Date
+
 lag.data.frame <- function(data, date_col, months){
   #' Produce a data set where observations have been lagged in time by a given value. 
   #' If multiple lagging months are given - the data set produces duplicates.

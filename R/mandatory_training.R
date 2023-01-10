@@ -1,3 +1,6 @@
+# Tag:ESR
+# Tag:MandatoryTraining
+
 make.monthly.mand.training <- function(table = "jpuh_ESR_Mandatory_Training_2", 
                                        fn = pkg.env$default_functions) {
   #' 

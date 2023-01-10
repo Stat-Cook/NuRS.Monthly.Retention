@@ -1,5 +1,7 @@
-#' Generate DB connection object from config file.
-# library(odbc)
+# Generate DB connection object from config file.
+# Tag:Connect
+# Tag:odbc
+# Tag:Key
 
 
 credential.prompt <- function(){

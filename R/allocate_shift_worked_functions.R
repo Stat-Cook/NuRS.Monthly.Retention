@@ -1,3 +1,7 @@
+# Tag:ShiftsWorked
+# Tag:Allocate
+# Tag:Establishment
+
 sw_to_date <- function(values) {
   #' Convert char to date 
   #' 

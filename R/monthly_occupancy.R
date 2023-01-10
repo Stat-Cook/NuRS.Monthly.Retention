@@ -1,3 +1,5 @@
+# Tag:Occupancy
+
 get.pas.file <- function(){
   
   #' For generating Monthly Average Establishment

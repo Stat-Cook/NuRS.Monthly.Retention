@@ -1,3 +1,7 @@
+# Tag:Allocate
+# Tag:ShiftsWorked
+# Tag:Demographics
+
 model.cols <- c("Owning Unit", "Duty Date")
 
 demographic.cols <- c("Gender", "Ethnic Origin", "Disability", 
@@ -9,6 +13,11 @@ demographic.cols <- c("Gender", "Ethnic Origin", "Disability",
                "Disability Category")
 
 one.hot.encode <- function(data, column) {
+  #' Convert categorical variable to encoded matrix with dimensions 'nrow' x 'cardinality' 
+  #' 
+  #' @param data A data frame 
+  #' @param column A column of data to encode.
+  #' 
   #' @importFrom tidyr spread
   data %>% mutate(.value = 1)  %>% 
     mutate("{column}" := paste(column, .data[[column]], sep=".")) %>%
@@ -16,6 +25,12 @@ one.hot.encode <- function(data, column) {
 }
 
 encode.all.demos <- function(data, factor.cols) {
+  #' convert all given variables to a one hot encoding.
+  #' 
+  #' @param data A data frame
+  #' @param factor.cols A vector of column in data
+  #'
+  
   loop.data <- data
   for (col in factor.cols){
     loop.data <- one.hot.encode(loop.data, col)
@@ -25,6 +40,13 @@ encode.all.demos <- function(data, factor.cols) {
 }
 
 to.chunks <- function(data, chunk.size = 1e4){
+  
+  #' Subdivide a data frame into a list of data frames for divide and conquer.
+  #' 
+  #' @param data A data frame
+  #' @param chunk.size The max number of rows per item in list.
+  #' 
+  
   .nrow <- nrow(data)
   splits <- factor(floor(1:.nrow / chunk.size))
   data %>% 
@@ -33,17 +55,17 @@ to.chunks <- function(data, chunk.size = 1e4){
 
 }
 
-con <- open.connection()
-
-year <- 2018
-
-unlist(esr_to_allocate_list)
 
 fetch.swd <- function(year, .con=pkg.env$con){
+  
+  #' Get shifts worked data for a given year, and mark where values are missing due to 
+  #' scrambler
+  #' 
+  #' @param year Numeric year of data to convert
+  #' @param .con A DBI connection object
 
   new <- glue("JPUH_Allocate_Shifts_Worked_Demographics_Combined_{year}_tsv")
   frm <- tbl(.con, new) %>% 
-    # filter(`Owning Unit` %in% unlist(esr_to_allocate_list)) %>% 
     filter(`Shift Type` != "Rest") %>%
     select(`Duty Date`, `Shift Type`,`Owning Unit`, 
            all_of(demographic.cols)) %>% 
@@ -75,6 +97,7 @@ fetch.swd <- function(year, .con=pkg.env$con){
 
 
 {
+  # Load demographics cardinality reduction spreadsheet
   demo.list <- list()
   for (demo in demographic.cols){
     frm <- readxl::read_excel("raw_data/DemographicAnalysisGroups.xlsx", demo)
@@ -84,22 +107,31 @@ fetch.swd <- function(year, .con=pkg.env$con){
   }
 }
 
-clean.demographics <- function(values, .list = demo.list){
+clean.demographics <- function(data, .list = demo.list){
   
+  #' Remap demographics in a data set based on "DemographicAnalysisGroups.xlsx"
+  #' 
+  #' @param data A data frame
+  #' @param .list A mapped list of cardinality reduction.
+  #' 
   for (demo in demographic.cols){
     lookup <- .list[[demo]]
     lookup["Lone Shift Missing"] <- "Lone Shift Missing"
-    values <- values %>% 
+    data <- data %>% 
       mutate(
         "{demo}" := lookup[.data[[demo]]]
       )
   }
   
-  values
+  data
 }
 
 process.swd <- function(frm){
   
+  #' Convert demographics in the shifts worked data set based on 'DemographicAnalysisGroups.xlsx' 
+  #' 
+  #' @param frm A data frame of shifts worked demographics
+  #' 
   #' @importFrom purrr map
   
   chunked.frm <- frm  %>% to.chunks(5e3)
@@ -120,10 +152,10 @@ process.swd <- function(frm){
   combined
 }
 
-#memory.limit(size=20000)
-
 
 get.demographic.data <- function(){
+  #' Fetch and clean demographics data and cache to file.
+  
   swd.list <- lapply(2015:2020, fetch.swd)
 
   swd.clean.demos.list <- lapply(swd.list, clean.demographics)
@@ -142,6 +174,9 @@ get.demographic.data <- function(){
 
 
 make.demographics <- function(){
+
+  #' Produce the monthly lagged demographics data set having reduced demographic cardinality.
+  #'
   #' @export
   
   if (!file.exists("processed_data/SWD_Raw.RData")){
@@ -191,7 +226,38 @@ make.demographics <- function(){
   lagged.demo.proportions
 }
 
+# .all.cols <- colnames(lagged.demo.proportions$`Lag 3-4`) 
+# 
+# .demo.cols <- .all.cols[grepl("Lag", .all.cols)] %>% 
+#   stringr::str_replace("Lag 3-4 ", "")
+
+# min1 <- 3
+# min2 <- 5
+# max1 <- 4
+# max2 <- 6
+# merged <- merge(lagged.demo.proportions$`Lag 3-4`, lagged.demo.proportions$`Lag 5-6`)
+# 
+# lag.corr <- function(.col){
+#   col1 <- glue("Lag {min1}-{max1} {.col}")
+#   col2 <- glue("Lag {min2}-{max2} {.col}")
+#   cor(merged[[col1]], merged[[col2]])
+# }
+# 
+# lag.3.4.5.6.corrs <- sapply(.demo.cols, lag.corr)
+# 
+# min(sort(lag.3.4.5.6.corrs)[-c(1:15)])
+# 
+# .all.cols[grepl("Gender", .all.cols)]
+# 
+# cor(
+#   merged$`Lag 3-4 Gender.Male Est. Proportion`, 
+#   merged$`Lag 3-4 Gender.Female Est. Proportion`
+# )
+
 make.annual.demographics <- function(){
+  #' Produce the annual lagged demographics data set having 
+  #' reduced demographic cardinality.
+  #'
   #' @export
   
   if (!file.exists("processed_data/SWD_Raw.RData")){

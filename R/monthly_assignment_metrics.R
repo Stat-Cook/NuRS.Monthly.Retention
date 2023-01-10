@@ -1,3 +1,6 @@
+# Tag:Allocate
+# Tag:Assignments
+
 make.monthly.assignment <- function(fn = pkg.env$default_functions){
   
   #' 

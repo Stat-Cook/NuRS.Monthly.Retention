@@ -89,17 +89,17 @@ sickness.windows <- function(data, month.starts, month.ends) {
   do.call(rbind, sickness.list)
 }
 
-make.monthly.sickness <- function(sql.table = "jpuh_ESR_Sickness_processed") {
+make.monthly.sickness <- function(sql_table = "jpuh_ESR_Sickness_processed") {
   #' Produce time lost to sickness features
   #'
   #' Convert data set into ward-month sickness fte lost reports.
   #'
-  #' @param sql.table Sql database name.
+  #' @param sql_table Sql database name.
   #'
   #' @export
   #'
   #'
-  sick <- tbl(pkg_env$con, sql.table) %>%
+  sick <- tbl(pkg_env$con, sql_table) %>%
     select(Organisation, `Absence End Date`, `Absence Start Date`, `FTE Days Lost`) %>%
     collect() %>%
     mutate(
@@ -127,7 +127,7 @@ make.monthly.sickness <- function(sql.table = "jpuh_ESR_Sickness_processed") {
       )
   }
 
-  ms <- lagged.process(lagged.sickness.f)
+  ms <- lagged_process(lagged.sickness.f)
 
   ms %>% saveRDS("processed_data/Sickness_Monthly_Lagged.RData")
 

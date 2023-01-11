@@ -16,7 +16,7 @@ make.folders <- function() {
   dir.create(pkg_env$result_folder)
 }
 
-process.across.f <- function(data, date.col,
+process_across_f <- function(data, date.col,
                              .cols = everything(),
                              .fn = default.fn) {
   #' Function factory for lagging data
@@ -42,7 +42,7 @@ process.across.f <- function(data, date.col,
   }
 }
 
-lagged.process <- function(process.func) {
+lagged_process <- function(process.func) {
   #' Apply a function to sets of lag windows
   #'
   #' @param process.func A function expecting to receive a lag-window to produce data.

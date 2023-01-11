@@ -2,11 +2,11 @@
 # Tag:WardStay
 # Tag:Occupancy
 
-load.pas.data <- function(sql.table = "pas_wardstays") {
+load.pas.data <- function(sql_table = "pas_wardstays") {
   #' Read pas ward stay data
   #'
-  #' @param sql.table PAS table name in sql engine
-  pas.ws <- tbl(pkg_env$con, sql.table) %>%
+  #' @param sql_table PAS table name in sql engine
+  pas.ws <- tbl(pkg_env$con, sql_table) %>%
     collect()
   colnames(pas.ws) <- c(
     "Hospital_Provider_Spell_No", "PatientID",
@@ -16,7 +16,7 @@ load.pas.data <- function(sql.table = "pas_wardstays") {
 }
 
 
-make.admissions.discharges <- function(sql.table = "pas_wardstays") {
+make.admissions.discharges <- function(sql_table = "pas_wardstays") {
   #' Calculate monthly admissions and discharges
   #'
   #' Ward level time series.
@@ -27,9 +27,9 @@ make.admissions.discharges <- function(sql.table = "pas_wardstays") {
   #' 3. Add beds to each
   #' 4. Group data sets by adet and calculate count per mean(Beds)
   #'
-  #' @param sql.table PAS table name in sql engine
+  #' @param sql_table PAS table name in sql engine
   #' @export
-  pas.ws <- load.pas.data(sql.table)
+  pas.ws <- load.pas.data(sql_table)
 
   pas.start.frame <- pas.ws %>%
     filter(Ward %in% names(pas_to_allocate_list)) %>% #
@@ -57,14 +57,14 @@ make.admissions.discharges <- function(sql.table = "pas_wardstays") {
     merge(pas.start, pas.end)
   }
 
-  start.end <- lagged.process(pas.start.end.f)
+  start.end <- lagged_process(pas.start.end.f)
   start.end %>% saveRDS("processed_data/WardStay_StartEnd_Monthly.RData")
 }
 
 
-make.ward.occupancy <- function(sql.table = "pas_wardstays") {
+make.ward.occupancy <- function(sql_table = "pas_wardstays") {
   #' @export
-  pas.ws <- load.pas.data(sql.table)
+  pas.ws <- load.pas.data(sql_table)
 
   pas.by.month <- DEFAULT.INTERVAL.FUNC(pas.ws, StartDate, EndDate)
 
@@ -96,6 +96,6 @@ make.ward.occupancy <- function(sql.table = "pas_wardstays") {
       )
   }
 
-  lagged.pas <- lagged.process(lagged.pas.f)
+  lagged.pas <- lagged_process(lagged.pas.f)
   lagged.pas %>% saveRDS("processed_data/WardStay_Monthly.RData")
 }

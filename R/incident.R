@@ -1,7 +1,7 @@
 # Tag:Ulysses
 # Tag:Incident
 
-make.incident.data <- function(sql.table = "jpuh_ulysses_IncidentFile") {
+make.incident.data <- function(sql_table = "jpuh_ulysses_IncidentFile") {
   #' Querry incident data
   #'
   #' Steps:
@@ -10,12 +10,12 @@ make.incident.data <- function(sql.table = "jpuh_ulysses_IncidentFile") {
   #' 3. Lag data and calculate monthly harmful/ non-harmful events per ward
   #' 4. Convert incidents to incidents per patient day
   #'
-  #' @param sql.table Name of data set
+  #' @param sql_table Name of data set
   #'
   #' @export
   #' @importFrom purrr map2
 
-  incident <- tbl(con, sql.table) %>%
+  incident <- tbl(con, sql_table) %>%
     select(Department, `Incident Date`, `Actual Impact`) %>%
     collect()
 
@@ -60,7 +60,7 @@ make.incident.data <- function(sql.table = "jpuh_ulysses_IncidentFile") {
       select(Ward, Year, Month, contains("per Patient Day"))
   }
 
-  monthly.incident <- lagged.process(incident.summary.f)
+  monthly.incident <- lagged_process(incident.summary.f)
 
   monthly.incident %>% saveRDS("processed_data/Incident_Monthly_Lagged.RData")
   monthly.incident

@@ -112,7 +112,7 @@ make.shifts.worked <- function() {
     result
   }
 
-  sw.lagged <- lagged.process(sw.f)
+  sw.lagged <- lagged_process(sw.f)
   sw.lagged.proportions <- lapply(sw.lagged, sum.to.proportion)
 
   sw.lagged %>% saveRDS("processed_data/ShiftsWorked_Monthly_Lagged.RData")

@@ -219,7 +219,7 @@ make.demographics <- function() {
     demo.proportions
   }
 
-  lagged.demo.proportions <- lagged.process(lagged.demographic.f)
+  lagged.demo.proportions <- lagged_process(lagged.demographic.f)
 
   saveRDS(lagged.demo.proportions, "processed_data/SWD_Monthly.RData")
 

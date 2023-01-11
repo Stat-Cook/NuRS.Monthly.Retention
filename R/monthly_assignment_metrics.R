@@ -54,12 +54,12 @@ make.monthly.assignment <- function(fn = pkg_env$default_functions) {
     "Over Staffed", "Under Staffed", "Fully Staffed", "Mixed"
   )
 
-  assignment.metrics.f <- process.across.f(
+  assignment.metrics.f <- process_across_f(
     assignment.shift.overlap.per.bed, "Date",
     all_of(staff.cols), fn
   )
 
-  assignment.metrics <- lagged.process(assignment.metrics.f)
+  assignment.metrics <- lagged_process(assignment.metrics.f)
 
 
   var.data <- assignment.shift.overlap.per.bed %>%
@@ -75,20 +75,20 @@ make.monthly.assignment <- function(fn = pkg_env$default_functions) {
 
   var.data$averages %>% filter(Ward == "CDS", Year == 2020)
 
-  between.var.f <- process.across.f(
+  between.var.f <- process_across_f(
     var.data$averages, "Date",
     where(is.numeric),
     list("Between Shift Var" = var)
   )
 
-  within.var.f <- process.across.f(
+  within.var.f <- process_across_f(
     var.data$`De-meaned`, "Date",
     where(is.numeric),
     list("Within Shift Var" = var)
   )
 
-  assignment.between.var <- lagged.process(between.var.f)
-  assignment.within.var <- lagged.process(within.var.f)
+  assignment.between.var <- lagged_process(between.var.f)
+  assignment.within.var <- lagged_process(within.var.f)
 
   assignment.merged.metrics <- merge.lists.by.name(
     assignment.metrics, assignment.between.var, assignment.within.var

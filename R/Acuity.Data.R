@@ -25,11 +25,12 @@ make_monthly_acuity <- function(sql_table = "jpuh_AllocateAcuity",
   #'   (Defaults: mean, var, Na ratio) at lag periods
   #' 8. Save to file
   #'
-  #' @param sql.table Name of relevant sql table
+  #' @param sql_table Name of relevant sql table
   #' @param fn List of functions to use for summarizing data
   #'
   #' @export
   #' @importFrom magrittr %>%
+  #' @importFrom data.table %like%
   #' @importFrom reshape2 dcast
   #' @import dplyr
   #' @importFrom dplyr tbl collect mutate
@@ -57,36 +58,35 @@ make_monthly_acuity <- function(sql_table = "jpuh_AllocateAcuity",
   )
 
   pivoted_allocate_some_entered <- pivoted_allocate[!sel, ]
-  # pivoted.allocate.all <- pivoted_allocate
 
   pivoted_allocate_some_entered[is.na(pivoted_allocate_some_entered)] <- 0
 
   pivoted_allocate_some_entered <- pivoted_allocate_some_entered %>% mutate(
     `Acuity Score` = acuity_score(
-      .data$`Level 0`, .data$`Level 1A`, .data$`Level 1B`, 
+      .data$`Level 0`, .data$`Level 1A`, .data$`Level 1B`,
       .data$`Level 2`, .data$`Level 3`
       )
   )
 
-  pivoted_allocate_some_entered <- add_bed.size.all(
+  pivoted_allocate_some_entered <- add_bed_size_all(
     pivoted_allocate_some_entered,
     "ValidDate"
   )
 
-  pivoted.allocate.some.entered.per.bed <- pivoted_allocate_some_entered %>%
+  piv_allo_some_entered_per_bed <- pivoted_allocate_some_entered %>%
     mutate(
       across(
         contains("Level"),
-        function(i) i / Beds,
+        function(i) i / .data$Beds,
         .names = "{.col} per Bed"
       )
     ) %>%
     mutate(
-      `Acuity Score per Bed` = `Acuity Score` / Beds
+      `Acuity Score per Bed` = .data$`Acuity Score` / .data$Beds
     )
 
-  allo.process.f <- process.across.f(
-    pivoted.allocate.some.entered.per.bed, "ValidDate",
+  allo_process_f <- process_across_f(
+    piv_allo_some_entered_per_bed, "ValidDate",
     all_of(c(
       "Level 0 per Bed", "Level 1A per Bed", "Level 1B per Bed",
       "Level 2 per Bed", "Level 3 per Bed", "Acuity Score per Bed"
@@ -94,9 +94,9 @@ make_monthly_acuity <- function(sql_table = "jpuh_AllocateAcuity",
     fn
   )
 
-  monthly.allocate <- lagged.process(allo.process.f)
+  monthly_allocate <- lagged_process(allo_process_f)
 
-  monthly.allocate %>% saveRDS("processed_data/Allocate_Monthly_Lagged.RData")
+  monthly_allocate %>% saveRDS("processed_data/Allocate_Monthly_Lagged.RData")
 
-  monthly.allocate
+  monthly_allocate
 }

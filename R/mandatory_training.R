@@ -19,14 +19,14 @@ make.monthly.mand.training <- function(table = "jpuh_ESR_Mandatory_Training_2",
     `Expiring Soon %` = 100 * as.double(`Expiring Soon`) / as.double(Required)
   )
 
-  mt.process.f <- process.across.f(
+  mt.process.f <- process_across_f(
     mt,
     "Date_stamp",
     c(`Compliance %`, `Expiring Soon %`),
     fn
   )
 
-  mt.laged <- lagged.process(mt.process.f)
+  mt.laged <- lagged_process(mt.process.f)
 
   mt.laged %>% saveRDS("processed_data/MandTraining_Monthly_Lagged.RData")
 }

@@ -7,9 +7,9 @@ get.establishment.by.year <- function(.year) {
   #' @param .year Year of data to be processed
   #'
   #'
-  sql.table <- glue("jpuh_Allocate_Shifts_Worked_Demographics_Combined_{.year}")
+  sql_table <- glue("jpuh_Allocate_Shifts_Worked_Demographics_Combined_{.year}")
 
-  sw <- tbl(con, sql.table) %>%
+  sw <- tbl(con, sql_table) %>%
     select(`Owning Unit`, `Duty Date`) %>%
     collect() %>%
     mutate(

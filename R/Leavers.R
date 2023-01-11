@@ -3,12 +3,12 @@
 
 LEAVERS.SQL.TABLE <- "JPUH_Leavers_Monthly_Frequencies_StaffGroup"
 
-get.leavers <- function(sql.table = LEAVERS.SQL.TABLE) {
+get.leavers <- function(sql_table = LEAVERS.SQL.TABLE) {
   #' Query list of leavers from 'staging' data base
   #'
-  #' @param sql.table Name of data set in database
+  #' @param sql_table Name of data set in database
   #'
-  tbl(pkg_env$con, sql.table) %>%
+  tbl(pkg_env$con, sql_table) %>%
     collect() %>%
     mutate(
       `Termination Month` = as.Date(paste(`Termination Month`, "01", sep = "-")),
@@ -19,8 +19,8 @@ get.leavers <- function(sql.table = LEAVERS.SQL.TABLE) {
     add.establishment(`Termination Month`)
 }
 
-sql.table <- LEAVERS.SQL.TABLE
-make.voluntary.outcome <- function(sql.table = LEAVERS.SQL.TABLE) {
+sql_table <- LEAVERS.SQL.TABLE
+make.voluntary.outcome <- function(sql_table = LEAVERS.SQL.TABLE) {
   #'
   #' Step
   #' 1. Limit analysis to only voluntary leavers
@@ -28,11 +28,11 @@ make.voluntary.outcome <- function(sql.table = LEAVERS.SQL.TABLE) {
   #' 3. Add in ward-months with no turnover
   #' 4. Save to file
   #'
-  #' @param sql.table Name of data set in database
+  #' @param sql_table Name of data set in database
   #'
   #' @export
   #' @importFrom tidyr replace_na
-  leavers <- get.leavers(sql.table)
+  leavers <- get.leavers(sql_table)
 
   voluntary.resignation <- leavers %>%
     filter(str_detect(`Leaving Reason`, "Voluntary Resignation")) %>%
@@ -52,16 +52,16 @@ make.voluntary.outcome <- function(sql.table = LEAVERS.SQL.TABLE) {
   vr.all.months
 }
 
-make.voluntary.leavers <- function(sql.table = LEAVERS.SQL.TABLE) {
+make.voluntary.leavers <- function(sql_table = LEAVERS.SQL.TABLE) {
   #'
   #' Steps
   #' 1. Limit data to only wards in allocate data set
   #' 2. Calculate
   #'
-  #' @param sql.table Name of data set in database
+  #' @param sql_table Name of data set in database
   #'
   #' @export
-  leavers <- get.leavers(sql.table)
+  leavers <- get.leavers(sql_table)
 
   ward.month.leavers <- leavers %>%
     group_by(Ward, `Termination Month`, `Leaving Reason`) %>%
@@ -72,10 +72,10 @@ make.voluntary.leavers <- function(sql.table = LEAVERS.SQL.TABLE) {
   leavers.count.f <- ward.month.leavers %>%
     filter(Ward != "Unknown") %>%
     mutate(`Leavers per Average Est` = Count / `Average Est`) %>%
-    process.across.f("Termination Month", `Leavers per Average Est`, list(`per Month` = mean))
+    process_across_f("Termination Month", `Leavers per Average Est`, list(`per Month` = mean))
 
   {
-    leavers.laged <- lagged.process(leavers.count.f)
+    leavers.laged <- lagged_process(leavers.count.f)
 
     leavers.laged <- lapply(
       leavers.laged,
@@ -89,12 +89,12 @@ make.voluntary.leavers <- function(sql.table = LEAVERS.SQL.TABLE) {
 }
 
 
-make.all.leavers <- function(sql.table = LEAVERS.SQL.TABLE) {
+make.all.leavers <- function(sql_table = LEAVERS.SQL.TABLE) {
   #' Make data set of all Leavers
   #'
-  #' @param sql.table Name of data set in database
+  #' @param sql_table Name of data set in database
   #' @export
-  leavers <- get.leavers(sql.table)
+  leavers <- get.leavers(sql_table)
 
   ward.month.leavers <- leavers %>%
     group_by(Ward, `Termination Month`, `Leaving Reason`) %>%
@@ -105,10 +105,10 @@ make.all.leavers <- function(sql.table = LEAVERS.SQL.TABLE) {
     filter(Ward != "Unknown") %>%
     filter(str_detect(`Leaving Reason`, "Voluntary Resignation")) %>%
     mutate(`Voluntary Leavers per Average Est` = Count / `Average Est`) %>%
-    process.across.f("Termination Month", `Voluntary Leavers per Average Est`, list(`per Month` = mean))
+    process_across_f("Termination Month", `Voluntary Leavers per Average Est`, list(`per Month` = mean))
 
   {
-    leavers.voluntary.laged <- lagged.process(leavers.voluntary.count.f)
+    leavers.voluntary.laged <- lagged_process(leavers.voluntary.count.f)
 
     leavers.voluntary.laged <- lapply(
       leavers.voluntary.laged,

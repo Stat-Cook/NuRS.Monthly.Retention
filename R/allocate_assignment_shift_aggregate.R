@@ -16,15 +16,15 @@ status_f <- function(delta_reg, delta_unreg, delta_other) {
   
   all(signs == 0)
   
-  if all(signs == 0) {
+  if (all(signs == 0)) {
     return("Fully Staffed")
   }
   
-  if all(signs >= 0) {
+  if (all(signs >= 0)) {
     return("Over Staffed")
   }
   
-  if all(signs <= 0) {
+  if (all(signs <= 0)) {
     return("Under Staffed")
   }
   

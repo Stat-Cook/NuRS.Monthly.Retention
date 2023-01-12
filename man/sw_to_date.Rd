@@ -10,5 +10,6 @@ sw_to_date(values)
 \item{value}{Vector of character values}
 }
 \description{
-Cast data to date [specifically designed for use with shifts worked data set].
+Cast data to date [specifically designed
+  for use with shifts worked data set].
 }

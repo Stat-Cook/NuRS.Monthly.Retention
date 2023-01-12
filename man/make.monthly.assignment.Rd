@@ -8,7 +8,7 @@
 3. Calculate shift staffing (Count and Hours) per bed
 4. Calculate aggregate metrics for staffing and staff status columns.}
 \usage{
-make.monthly.assignment(fn = pkg.env$default_functions)
+make.monthly.assignment(fn = pkg_env$default_functions)
 }
 \arguments{
 \item{fn}{List of aggregate metrics}

@@ -7,9 +7,11 @@
 acuity.var.features.f(data, window, feature)
 }
 \arguments{
-\item{data}{}
+\item{data}{A data frame}
 
-\item{grid}{}
+\item{window}{The lagged window of interest [str]}
+
+\item{feature}{The type of variable to be used [str]}
 }
 \description{
 Converts from varaiance to variance per mean.

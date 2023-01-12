@@ -13,7 +13,7 @@
 A data frame
 }
 \description{
-Produces a data frame of all combinations of Wards and Dates in 'data', 
-and merges to 'data'.  Results in 'na' values where the Ward and Date 
+Produces a data frame of all combinations of Wards and Dates in 'data',
+and merges to 'data'.  Results in 'na' values where the Ward and Date
 combination wasn't in 'data'
 }

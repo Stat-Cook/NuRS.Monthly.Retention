@@ -4,10 +4,10 @@
 \alias{make.monthly.sickness}
 \title{Produce time lost to sickness features}
 \usage{
-make.monthly.sickness(sql.table = "jpuh_ESR_Sickness_processed")
+make.monthly.sickness(sql_table = "jpuh_ESR_Sickness_processed")
 }
 \arguments{
-\item{sql.table}{Sql database name.}
+\item{sql_table}{Sql database name.}
 }
 \description{
 Convert data set into ward-month sickness fte lost reports.

@@ -7,7 +7,7 @@
 sickness.windows(data, month.starts, month.ends)
 }
 \arguments{
-\item{data}{A data frame containing `Absence Start Date` and 
+\item{data}{A data frame containing `Absence Start Date` and
 `Absence End Date` fields}
 
 \item{month.starts}{A vector of month start dates.}

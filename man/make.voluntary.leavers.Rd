@@ -6,10 +6,10 @@
 1. Limit data to only wards in allocate data set
 2. Calculate}
 \usage{
-make.voluntary.leavers(sql.table = LEAVERS.SQL.TABLE)
+make.voluntary.leavers(sql_table = LEAVERS_SQL_TABLE)
 }
 \arguments{
-\item{sql.table}{Name of data set in database}
+\item{sql_table}{Name of data set in database}
 }
 \description{
 Steps

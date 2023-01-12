@@ -4,7 +4,7 @@ if(!file.exists("config.yml")){
   
   config.deafults <- c(
     "default:",
-    "  Driver: SQL Server",
+    "  Driver: 'SQL Server'",
     "  Server: ",
     "  Database: ",
     "  UID: !expr keyring::key_get('db_credentials_UID')",

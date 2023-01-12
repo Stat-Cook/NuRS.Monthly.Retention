@@ -11,6 +11,6 @@ var.functions(data)
 }
 \description{
 Calculate:
-1. Variance between average staffing of the shifts 
+1. Variance between average staffing of the shifts
 2. Variance within shifts of staffing.
 }

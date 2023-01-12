@@ -10,6 +10,6 @@
 \item{...}{A series of Lists with shared names}
 }
 \description{
-Takes a series of lists and produces a single list, combining based on 
+Takes a series of lists and produces a single list, combining based on
   names.
 }

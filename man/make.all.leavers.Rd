@@ -4,10 +4,10 @@
 \alias{make.all.leavers}
 \title{Make data set of all Leavers}
 \usage{
-make.all.leavers(sql.table = LEAVERS.SQL.TABLE)
+make.all.leavers(sql_table = LEAVERS_SQL_TABLE)
 }
 \arguments{
-\item{sql.table}{Name of data set in database}
+\item{sql_table}{Name of data set in database}
 }
 \description{
 Make data set of all Leavers

@@ -4,17 +4,17 @@
 \alias{make.monthly.mand.training}
 \title{Steps:
 1. Calculate Expiring soon %
-2. Calcualte aggregate metrics [Defaults: mean, var, Na ratio] at lag periods 
+2. Calcualte aggregate metrics [Defaults: mean, var, Na ratio] at lag periods
 3. Save to file}
 \usage{
 make.monthly.mand.training(
   table = "jpuh_ESR_Mandatory_Training_2",
-  fn = pkg.env$default_functions
+  fn = pkg_env$default_functions
 )
 }
 \description{
 Steps:
 1. Calculate Expiring soon %
-2. Calcualte aggregate metrics [Defaults: mean, var, Na ratio] at lag periods 
+2. Calcualte aggregate metrics [Defaults: mean, var, Na ratio] at lag periods
 3. Save to file
 }

@@ -2,19 +2,19 @@
 % Please edit documentation in R/Leavers.R
 \name{make.voluntary.outcome}
 \alias{make.voluntary.outcome}
-\title{Step 
+\title{Step
 1. Limit analysis to only voluntary leavers
 2. Calculate Monthly Turnover
 3. Add in ward-months with no turnover
 4. Save to file}
 \usage{
-make.voluntary.outcome(sql.table = LEAVERS.SQL.TABLE)
+make.voluntary.outcome(sql_table = LEAVERS_SQL_TABLE)
 }
 \arguments{
-\item{sql.table}{Name of data set in database}
+\item{sql_table}{Name of data set in database}
 }
 \description{
-Step 
+Step
 1. Limit analysis to only voluntary leavers
 2. Calculate Monthly Turnover
 3. Add in ward-months with no turnover

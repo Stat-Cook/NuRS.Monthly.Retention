@@ -4,10 +4,10 @@
 \alias{load.pas.data}
 \title{Read pas ward stay data}
 \usage{
-load.pas.data(sql.table = "pas_wardstays")
+load.pas.data(sql_table = "pas_wardstays")
 }
 \arguments{
-\item{sql.table}{PAS table name in sql engine}
+\item{sql_table}{PAS table name in sql engine}
 }
 \description{
 Read pas ward stay data

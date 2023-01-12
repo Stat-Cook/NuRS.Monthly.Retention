@@ -3,7 +3,12 @@
 \docType{data}
 \name{ulys_to_allocate_list}
 \alias{ulys_to_allocate_list}
-\title{Mappings to Allocate Ward names}
+\title{Mappings to Allocate Ward names
+Tag:Lookup
+Tag:Allocate
+Tag:Ulysses
+Tag:ESR
+Tag:PAS}
 \format{
 An object of class \code{list} of length 35.
 }
@@ -12,5 +17,10 @@ ulys_to_allocate_list
 }
 \description{
 Mappings to Allocate Ward names
+Tag:Lookup
+Tag:Allocate
+Tag:Ulysses
+Tag:ESR
+Tag:PAS
 }
 \keyword{datasets}

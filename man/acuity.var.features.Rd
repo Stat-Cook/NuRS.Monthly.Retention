@@ -7,9 +7,9 @@
 acuity.var.features(data, grid)
 }
 \arguments{
-\item{data}{}
+\item{data}{A data frame}
 
-\item{grid}{}
+\item{grid}{A frame with fields `Window` and `Features`}
 }
 \description{
 Converts from varaiance to variance per mean.

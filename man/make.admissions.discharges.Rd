@@ -4,10 +4,10 @@
 \alias{make.admissions.discharges}
 \title{Calculate monthly admissions and discharges}
 \usage{
-make.admissions.discharges(sql.table = "pas_wardstays")
+make.admissions.discharges(sql_table = "pas_wardstays")
 }
 \arguments{
-\item{sql.table}{PAS table name in sql engine}
+\item{sql_table}{PAS table name in sql engine}
 }
 \description{
 Ward level time series.

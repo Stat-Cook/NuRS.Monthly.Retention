@@ -7,9 +7,9 @@
 actual.within.shift.var.per.mean.loop(data, grid)
 }
 \arguments{
-\item{data}{}
+\item{data}{A data frame}
 
-\item{grid}{}
+\item{grid}{A frame with headings `Window`, `Staff`, `Type`.}
 }
 \description{
 Converts from varaiance to variance per mean.

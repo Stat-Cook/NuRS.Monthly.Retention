@@ -65,7 +65,7 @@ sum.to.proportion <- function(data) {
     rename_with(~ gsub("sum(Total Work)", "prop(Total Work)", .x, fixed = TRUE))
 }
 
-make.shifts.worked <- function() {
+make_shifts_worked <- function() {
   #' Generate the shifts worked data sets (No Demographics)
   #'
   #' @export
@@ -81,7 +81,7 @@ make.shifts.worked <- function() {
     )
 
   sw.f <- function(window) {
-    all.fts <- lag.data.frame(sw.daily.per.bed, "Date", window) %>%
+    all.fts <- lag_data_frame(sw.daily.per.bed, "Date", window) %>%
       mutate(Year = year(LagedDate), Month = month(LagedDate)) %>%
       group_by(Ward, `Fulfilment Type`, Year, Month) %>%
       summarize(

@@ -5,7 +5,8 @@
 sw_to_date <- function(values) {
   #' Convert char to date
   #'
-  #' Cast data to date [specifically designed for use with shifts worked data set].
+  #' Cast data to date [specifically designed
+  #'   for use with shifts worked data set].
   #'
   #' @param value Vector of character values
   #'
@@ -23,26 +24,25 @@ shift_worked_table <- function(.year) {
 }
 
 fetch_sw <- function(.year, .con = pkg_env$con) {
-  #' Get shifts workled data by year
+  #' Get shifts worked data by year
   #'
-  #' @param .year Year of data to be querried
+  #' @param .year Year of data to be queried
   #' @param .con SQL engine connection
   #' @importFrom dplyr mutate
   #'
-  tbl.string <- as.character(shift_worked_table(.year))
-  sql.query <- tbl(
+  tbl_string <- as.character(shift_worked_table(.year))
+  sql_query <- tbl(
     .con,
-    tbl.string
+    tbl_string
   )
 
-  # filter.to.acuity <- filter(sql.query, `Owning Unit` %in% allocate.wards)
-  raw.data <- collect(sql.query)
+  raw_data <- collect(sql_query)
 
-  mutate(raw.data, `Duty Date` = sw_to_date(`Duty Date`))
+  mutate(raw_data, `Duty Date` = sw_to_date(.data$`Duty Date`))
 }
 
 
-get.establishment <- function(.year) {
+get_establishment <- function(.year) {
   #' Fetch ward establishments
   #'
   #' @param .year Year of data to be queried and processed
@@ -51,13 +51,13 @@ get.establishment <- function(.year) {
   #' @importFrom dplyr mutate summarize group_by
   #'
   fetch_sw(.year) %>%
-    mutate(Ward = `Owning Unit`) %>%
-    group_by(Ward, `Duty Date`) %>%
+    mutate(Ward = .data$`Owning Unit`) %>%
+    group_by(.data$Ward, .data$`Duty Date`) %>%
     summarize(Count = n()) %>%
     group_by(
-      Ward,
-      Year = year(`Duty Date`),
-      Month = month(`Duty Date`)
+      .data$Ward,
+      Year = year(.data$`Duty Date`),
+      Month = month(.data$`Duty Date`)
     ) %>%
-    summarize(`Average Est` = mean(Count))
+    summarize(`Average Est` = mean(.data$Count))
 }

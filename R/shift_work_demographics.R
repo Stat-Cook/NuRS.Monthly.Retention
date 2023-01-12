@@ -153,7 +153,7 @@ process.swd <- function(frm) {
 }
 
 
-get.demographic.data <- function() {
+get_demographic_data <- function() {
   #' Fetch and clean demographics data and cache to file.
 
   swd.list <- lapply(2015:2020, fetch.swd)
@@ -173,13 +173,13 @@ get.demographic.data <- function() {
 }
 
 
-make.demographics <- function() {
+make_demographics <- function() {
   #' Produce the monthly lagged demographics data set having reduced demographic cardinality.
   #'
   #' @export
 
   if (!file.exists("processed_data/SWD_Raw.RData")) {
-    demos <- get.demographic.data()
+    demos <- get_demographic_data()
   } else {
     demos <- readRDS("processed_data/SWD_Raw.RData")
   }
@@ -187,7 +187,7 @@ make.demographics <- function() {
 
   lagged.demographic.f <- function(window) {
     month.demos <- demos %>%
-      lag.data.frame("Duty Date", window) %>%
+      lag_data_frame("Duty Date", window) %>%
       mutate(Ward = `Owning Unit`, Year = year(LagedDate), Month = month(LagedDate)) %>%
       group_by(Ward, Year, Month) %>%
       summarize(
@@ -254,14 +254,14 @@ make.demographics <- function() {
 #   merged$`Lag 3-4 Gender.Female Est. Proportion`
 # )
 
-make.annual.demographics <- function() {
+make_annual_demographics <- function() {
   #' Produce the annual lagged demographics data set having
   #' reduced demographic cardinality.
   #'
   #' @export
 
   if (!file.exists("processed_data/SWD_Raw.RData")) {
-    demos <- get.demographic.data()
+    demos <- get_demographic_data()
   } else {
     demos <- readRDS("processed_data/SWD_Raw.RData")
   }
@@ -269,7 +269,7 @@ make.annual.demographics <- function() {
 
   lagged.demographic.f <- function(window) {
     month.demos <- demos %>%
-      lag.data.frame("Duty Date", window) %>%
+      lag_data_frame("Duty Date", window) %>%
       mutate(Ward = `Owning Unit`, Year = year(LagedDate), Month = month(LagedDate)) %>%
       group_by(Ward, Year, Month) %>%
       summarize(

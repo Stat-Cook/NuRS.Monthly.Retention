@@ -16,7 +16,7 @@ load.pas.data <- function(sql_table = "pas_wardstays") {
 }
 
 
-make.admissions.discharges <- function(sql_table = "pas_wardstays") {
+make_admissions_discharges <- function(sql_table = "pas_wardstays") {
   #' Calculate monthly admissions and discharges
   #'
   #' Ward level time series.
@@ -45,12 +45,12 @@ make.admissions.discharges <- function(sql_table = "pas_wardstays") {
 
   pas.start.end.f <- function(window) {
     pas.start <- pas.start.frame %>%
-      lag.data.frame("StartDate", window) %>%
+      lag_data_frame("StartDate", window) %>%
       group_by(Ward, Year = year(LagedDate), Month = month(LagedDate)) %>%
       summarize("Lag {min(window)}-{max(window)} Stay Start Per Bed" := n() / mean(Beds))
 
     pas.end <- pas.end.frame %>%
-      lag.data.frame("EndDate", window) %>%
+      lag_data_frame("EndDate", window) %>%
       group_by(Ward, Year = year(LagedDate), Month = month(LagedDate)) %>%
       summarize("Lag {min(window)}-{max(window)} Stay End Per Bed" := n() / mean(Beds))
 
@@ -62,11 +62,11 @@ make.admissions.discharges <- function(sql_table = "pas_wardstays") {
 }
 
 
-make.ward.occupancy <- function(sql_table = "pas_wardstays") {
+make_ward_occupancy <- function(sql_table = "pas_wardstays") {
   #' @export
   pas.ws <- load.pas.data(sql_table)
 
-  pas.by.month <- DEFAULT.INTERVAL.FUNC(pas.ws, StartDate, EndDate)
+  pas.by.month <- DEFAULT_INTERVAL_FUNC(pas.ws, StartDate, EndDate)
 
   pas.monthly <- pas.by.month %>%
     mutate(Ward = pas_to_allocate(Ward)) %>%
@@ -88,7 +88,7 @@ make.ward.occupancy <- function(sql_table = "pas_wardstays") {
 
 
   lagged.pas.f <- function(window) {
-    lagged.group(pas.per.bed, "Month Starting", window) %>%
+    lagged_group(pas.per.bed, "Month Starting", window) %>%
       dplyr::summarize("Lag {min(window)}-{max(window)} Stay N" := n(),
         "Lag {min(window)}-{max(window)} Stay Total Days per Bed" := sum(`Stay Total Days per Bed`),
         "Lag {min(window)}-{max(window)} Stay Ave Days per Bed" := mean(`Stay Total Days per Bed`),

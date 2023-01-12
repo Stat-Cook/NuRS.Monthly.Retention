@@ -3,79 +3,35 @@ install.packages("devtools")
 devtools::document()
 devtools::load_all()
 
-con <- open.connection()
 library(DBI)
+
+con <- open.connection()
 tables <- dbListTables(con)
 
-tables[grepl("Leavers", tables)]
-
-leavers <- tbl(con, "JPUH_Leavers_Monthly_Frequencies_StaffGroup") %>% 
-  select(Count) %>% collect()
-
-
-est3 <- make.establishment.lag3()
+est3 <- make_establishment_lag3()
 
 acu <- make_monthly_acuity()
 
-mt <- make.monthly.mand.training()
+mt <- make_monthly_mand_training()
 
-assign.shifts <- make.assignment.shift.aggregate()
+assign_shifts <- make_assignment_shift_aggregate()
 
-month.assign <- make.monthly.assignment()
+month_assign <- make_monthly_assignment()
 
-leaver.diff <- vo.old$Leavers - vo.new$Leavers
+vo_new <- make_voluntary_outcome()
+vl_new <- make_voluntary_leavers()
+al_new <- make_all_leavers()
 
-vo.new <- make.voluntary.outcome() 
-vl.new <- make.voluntary.leavers()
-al.new <- make.all.leavers()
+inc <- make_incident_data()
 
-inc <- make.incident.data()
+ms <- make_monthly_sickness()
 
-ms <- make.monthly.sickness()
+admin_dis <- make_admissions_discharges()
+occup <- make_ward_occupancy()
 
-admin.dis <- make.admissions.discharges()
-occup <- make.ward.occupancy()
+shifts_worked <- make_shifts_worked()
 
-shifts.worked <- make.shifts.worked()
+temp <- get_demographic_data()
 
-temp <- get.demographic.data()
-
-demos <- make.demographics()
-
-demos
-annual.demos <- make.annual.demographics()
-ncol(annual.demos)
-colnames(annual.demos)
-
-demos$`Lag 5-6` %>% select(contains("NA")) %>% head()
-  
- 
-con <- open.connection()
-allo.head <- tbl(con, "JPUH_Allocate_Assignment_Combined_tsv")  %>% head(50000) %>% collect()
-
-
-
-
-{
-  month.demos <- demos %>% 
-    mutate(Ward = `Owning Unit`, Year = year(`Duty Date`), Month = month(`Duty Date`)) %>%
-    group_by(Ward, Year, Month) %>% summarize(
-      across(where(is.numeric), sum)
-    ) %>% as_tibble()
-  
-  
-  month.prop.demos.list <- lapply(
-    demographic.cols,
-    function(demo){
-      str <- paste(demo,".",sep="")
-      month.demos %>% 
-        select(contains(str))%>% 
-        mutate(across(everything()) / rowSums(across(everything())))
-    }
-  )
-  
-  cbind(
-    select(month.demos, Ward, Year, Month),
-    do.call(cbind, month.prop.demos.list)
-  )
-}
+demos <- make_demographics()
+annual_demos <- make_annual_demographics()

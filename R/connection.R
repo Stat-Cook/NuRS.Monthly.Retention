@@ -4,7 +4,7 @@
 # Tag:Key
 
 
-credential.prompt <- function() {
+credential_prompt <- function() {
   #' Ask user for SQL credentials
   #'
   #' @importFrom keyring key_set
@@ -27,13 +27,16 @@ open.connection <- function() {
     }
   )
 
-  con <- odbc::dbConnect(
-    odbc::odbc(),
-    Driver = dm$Driver,
-    Server = dm$Server,
-    Database = dm$Database,
-    UID = dm$UID,
-    PWD = dm$PWD
+  con <- tryCatch(
+    odbc::dbConnect(
+      odbc::odbc(),
+      Driver = dm$Driver,
+      Server = dm$Server,
+      Database = dm$Database,
+      UID = dm$UID,
+      PWD = dm$PWD
+    ),
+    error = function(e) NA
   )
 
   con

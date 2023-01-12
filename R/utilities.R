@@ -31,7 +31,7 @@ process_across_f <- function(data, date.col,
   #'
   #' @return A function expecting a laging time window (months) as an argument.
   function(window = 3:4) {
-    lagged.group(data, date.col, window) %>%
+    lagged_group(data, date.col, window) %>%
       dplyr::summarize(
         across(
           {{ .cols }},

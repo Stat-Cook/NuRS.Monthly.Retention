@@ -1,7 +1,7 @@
 # Tag:Allocate
 # Tag:Assignments
 
-make.monthly.assignment <- function(fn = pkg_env$default_functions) {
+make_monthly_assignment <- function(fn = pkg_env$default_functions) {
   #'
   #' Steps:
   #' 1. Limit analysis to shifts with at least one person in post.
@@ -12,7 +12,7 @@ make.monthly.assignment <- function(fn = pkg_env$default_functions) {
   #' @param fn List of aggregate metrics
   #' @export
   if (!file.exists(pkg_env$allocate_shit_aggregate_file)) {
-    make.assignment.shift.aggregate()
+    make_assign_shift_agg()
   }
 
   assignment.shift.overlap <- readRDS(pkg_env$allocate_shit_aggregate_file) %>%

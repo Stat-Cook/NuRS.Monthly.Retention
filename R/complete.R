@@ -1,19 +1,19 @@
 # Tag:Complete
 
 
-complete.f <- function(data) {
+complete_f <- function(data) {
   #' Check which rows of a data frame are complete
   #'
   #' @param data A data frame
   !is.na(data) %>% apply(1, any)
 }
 
-get.complete <- function(data) {
+get_complete <- function(data) {
   #' Select only complete rows of data set
   #'
   #' @param data A data frame
   #'
   #' @export
-  index <- complete.f(data)
+  index <- complete_f(data)
   data[index, ]
 }

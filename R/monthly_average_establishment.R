@@ -9,7 +9,7 @@ get.est.file <- function() {
   est.file <- pkg_env$est.file
 
   if (!file.exists(est.file)) {
-    est <- lapply(2015:2020, get.establishment)
+    est <- lapply(2015:2020, get_establishment)
     monthly.average.est <- do.call(rbind, est)
     saveRDS(monthly.average.est, est.file)
   } else {

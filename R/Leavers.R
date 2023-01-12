@@ -1,14 +1,14 @@
 # Tag:Leavers
 # Tag:Allocate
 
-LEAVERS.SQL.TABLE <- "JPUH_Leavers_Monthly_Frequencies_StaffGroup"
+LEAVERS_SQL_TABLE <- "JPUH_Leavers_Monthly_Frequencies_StaffGroup"
 
-get.leavers <- function(sql_table = LEAVERS.SQL.TABLE) {
+get_leavers <- function(sql_table = LEAVERS_SQL_TABLE, .con = pkg_env$con) {
   #' Query list of leavers from 'staging' data base
   #'
   #' @param sql_table Name of data set in database
   #'
-  tbl(pkg_env$con, sql_table) %>%
+  tbl(.con, sql_table) %>%
     collect() %>%
     mutate(
       `Termination Month` = as.Date(paste(`Termination Month`, "01", sep = "-")),
@@ -19,8 +19,8 @@ get.leavers <- function(sql_table = LEAVERS.SQL.TABLE) {
     add.establishment(`Termination Month`)
 }
 
-sql_table <- LEAVERS.SQL.TABLE
-make.voluntary.outcome <- function(sql_table = LEAVERS.SQL.TABLE) {
+sql_table <- LEAVERS_SQL_TABLE
+make_voluntary_outcome <- function(sql_table = LEAVERS_SQL_TABLE) {
   #'
   #' Step
   #' 1. Limit analysis to only voluntary leavers
@@ -32,7 +32,7 @@ make.voluntary.outcome <- function(sql_table = LEAVERS.SQL.TABLE) {
   #'
   #' @export
   #' @importFrom tidyr replace_na
-  leavers <- get.leavers(sql_table)
+  leavers <- get_leavers(sql_table)
 
   voluntary.resignation <- leavers %>%
     filter(str_detect(`Leaving Reason`, "Voluntary Resignation")) %>%
@@ -52,7 +52,7 @@ make.voluntary.outcome <- function(sql_table = LEAVERS.SQL.TABLE) {
   vr.all.months
 }
 
-make.voluntary.leavers <- function(sql_table = LEAVERS.SQL.TABLE) {
+make_voluntary_leavers <- function(sql_table = LEAVERS_SQL_TABLE) {
   #'
   #' Steps
   #' 1. Limit data to only wards in allocate data set
@@ -61,7 +61,7 @@ make.voluntary.leavers <- function(sql_table = LEAVERS.SQL.TABLE) {
   #' @param sql_table Name of data set in database
   #'
   #' @export
-  leavers <- get.leavers(sql_table)
+  leavers <- get_leavers(sql_table)
 
   ward.month.leavers <- leavers %>%
     group_by(Ward, `Termination Month`, `Leaving Reason`) %>%
@@ -89,12 +89,12 @@ make.voluntary.leavers <- function(sql_table = LEAVERS.SQL.TABLE) {
 }
 
 
-make.all.leavers <- function(sql_table = LEAVERS.SQL.TABLE) {
+make_all_leavers <- function(sql_table = LEAVERS_SQL_TABLE) {
   #' Make data set of all Leavers
   #'
   #' @param sql_table Name of data set in database
   #' @export
-  leavers <- get.leavers(sql_table)
+  leavers <- get_leavers(sql_table)
 
   ward.month.leavers <- leavers %>%
     group_by(Ward, `Termination Month`, `Leaving Reason`) %>%

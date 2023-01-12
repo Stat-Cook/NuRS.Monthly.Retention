@@ -65,7 +65,7 @@ make_monthly_acuity <- function(sql_table = "jpuh_AllocateAcuity",
     `Acuity Score` = acuity_score(
       .data$`Level 0`, .data$`Level 1A`, .data$`Level 1B`,
       .data$`Level 2`, .data$`Level 3`
-      )
+    )
   )
 
   pivoted_allocate_some_entered <- add_bed_size_all(

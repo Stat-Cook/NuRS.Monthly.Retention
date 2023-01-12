@@ -89,7 +89,7 @@ sickness.windows <- function(data, month.starts, month.ends) {
   do.call(rbind, sickness.list)
 }
 
-make.monthly.sickness <- function(sql_table = "jpuh_ESR_Sickness_processed") {
+make_monthly_sickness <- function(sql_table = "jpuh_ESR_Sickness_processed") {
   #' Produce time lost to sickness features
   #'
   #' Convert data set into ward-month sickness fte lost reports.
@@ -118,7 +118,7 @@ make.monthly.sickness <- function(sql_table = "jpuh_ESR_Sickness_processed") {
     )
 
   lagged.sickness.f <- function(window) {
-    lagged.group(monthly.sickness, "Month Starting", window) %>%
+    lagged_group(monthly.sickness, "Month Starting", window) %>%
       dplyr::summarize("Lag {min(window)}-{max(window)} Sickness N Spells" := n(),
         "Lag {min(window)}-{max(window)} Sickness Ave FTE Lost per Est" := mean(`Prorata FTE Lost per Establishment`),
         "Lag {min(window)}-{max(window)} Sickness SD FTE Lost per Est" := sd(`Prorata FTE Lost per Establishment`),

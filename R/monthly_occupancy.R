@@ -13,7 +13,7 @@ get.pas.file <- function() {
     pas.ws <- tbl(con, "pas_wardstays") %>% collect()
     colnames(pas.ws) <- c("Hospital_Provider_Spell_No", "PatientID", "StartDate", "EndDate", "Ward")
 
-    pas.by.month <- DEFAULT.INTERVAL.FUNC(pas.ws, StartDate, EndDate)
+    pas.by.month <- DEFAULT_INTERVAL_FUNC(pas.ws, StartDate, EndDate)
 
     pas.monthly <- pas.by.month %>%
       mutate(Ward = pas_to_allocate(Ward)) %>%

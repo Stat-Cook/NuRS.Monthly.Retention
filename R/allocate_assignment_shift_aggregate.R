@@ -13,28 +13,27 @@ status_f <- function(delta_reg, delta_unreg, delta_other) {
   #'
   #'
   signs <- sapply(c(delta_reg, delta_unreg, delta_other), sign)
-  
+
   all(signs == 0)
-  
+
   if (all(signs == 0)) {
     return("Fully Staffed")
   }
-  
+
   if (all(signs >= 0)) {
     return("Over Staffed")
   }
-  
+
   if (all(signs <= 0)) {
     return("Under Staffed")
   }
-  
+
   return("Mixed")
-  
 }
 
 status_vec <- Vectorize(status_f)
 
-make.assignment.shift.aggregate <- function(sql_table = "JPUH_Allocate_Assignment_Combined_tsv") {
+make_assign_shift_agg <- function(sql_table = "JPUH_Allocate_Assignment_Combined_tsv") {
   #' Make assignment shift data
   #'
   #'
@@ -81,46 +80,44 @@ make.assignment.shift.aggregate <- function(sql_table = "JPUH_Allocate_Assignmen
 
   cols <- colnames(assignment)
 
-  staff.cols <- c(
+  staff_cols <- c(
     cols[str_detect(cols, "Count")],
     cols[str_detect(cols, "Hours")]
   )
 
-  # assignment.overlap <- assignment %>% filter(Ward %in% esr_to_allocate_list)
-
-  assignment.shift.f <- function(.year) {
+  assignment_shift_f <- function(.year) {
     assignment %>%
-      filter(year(Date) == .year) %>%
-      group_by(Ward, Date, `Shift Type`) %>%
+      filter(year(.data$Date) == .year) %>%
+      group_by(.data$Ward, .data$Date, .data$`Shift Type`) %>%
       summarize(
         across(
-          all_of(staff.cols),
+          all_of(staff_cols),
           sum
         )
       )
   }
 
-  assignment.shift.overlap.list <- lapply(
+  assignment_shift_overlap_list <- lapply(
     2015:2020,
-    assignment.shift.f
+    assignment_shift_f
   )
 
-  assignment.shift.overlap <- do.call(rbind, assignment.shift.overlap.list) %>%
+  assignment_shift_overlap <- do.call(rbind, assignment_shift_overlap_list) %>%
     mutate(
       Status = status_vec(
-        `Delta Registered Hours`,
-        `Delta Unregistered Hours`,
-        `Delta Other Hours`
+        .data$`Delta Registered Hours`,
+        .data$`Delta Unregistered Hours`,
+        .data$`Delta Other Hours`
       )
     ) %>%
     mutate(
-      `Over Staffed` = (Status == "Over Staffed"),
-      `Under Staffed` = (Status == "Under Staffed"),
-      `Fully Staffed` = (Status == "Fully Staffed"),
-      `Mixed` = (Status == "Mixed")
+      `Over Staffed` = (.data$Status == "Over Staffed"),
+      `Under Staffed` = (.data$Status == "Under Staffed"),
+      `Fully Staffed` = (.data$Status == "Fully Staffed"),
+      `Mixed` = (.data$Status == "Mixed")
     ) %>%
     int.to.double()
 
-  assignment.shift.overlap %>% saveRDS(pkg_env$allocate_shit_aggregate_file)
-  assignment.shift.overlap
+  assignment_shift_overlap %>% saveRDS(pkg_env$allocate_shit_aggregate_file)
+  assignment_shift_overlap
 }

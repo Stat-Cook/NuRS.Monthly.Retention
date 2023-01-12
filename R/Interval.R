@@ -1,67 +1,69 @@
 # Tag:Date
 
-truncate.start <- function(interval.start) {
+truncate_start <- function(interval_start) {
   function(vals) {
-    data.table::fifelse(vals > interval.start, vals, interval.start)
+    data.table::fifelse(vals > interval_start, vals, interval_start)
   }
 }
 
-truncate.end <- function(interval.end) {
+truncate_end <- function(interval_end) {
   function(vals) {
-    data.table::fifelse(vals > interval.end, interval.end, vals)
+    data.table::fifelse(vals > interval_end, interval_end, vals)
   }
 }
 
 
-interval.f <- function(start.date = "2015-01-01",
-                       end.date = "2021-12-01",
+interval_f <- function(start_date = "2015-01-01",
+                       end_date = "2021-12-01",
                        by = "Month",
                        inclusive = TRUE) {
   #' @importFrom magrittr %>%
 
   # Define start and end points as datetimes
-  start.POSIXct <- as.POSIXct(start.date)
-  end.POSIXct <- as.POSIXct(end.date)
+  start_POSIXct <- as.POSIXct(start_date)
+  end_POSIXct <- as.POSIXct(end_date)
 
   # Produce sequence of dates-times
-  intervals <- seq(start.POSIXct, end.POSIXct,
+  intervals <- seq(start_POSIXct, end_POSIXct,
     by = tolower(by)
   )
   if (inclusive) {
-    intervals <- unique(c(start.POSIXct, intervals, end.POSIXct))
+    intervals <- unique(c(start_POSIXct, intervals, end_POSIXct))
   }
 
   # Split sequence into start and end of `by` duration
-  interval.starts <- head(intervals, -1)
-  interval.ends <- tail(intervals, -1)
-  k <- length(interval.starts)
+  interval_starts <- head(intervals, -1)
+  interval_ends <- tail(intervals, -1)
+  k <- length(interval_starts)
 
   # Produce an internal function   to select appropriate data and
   # limit period to
-  temp.f <- function(data, i = 1, start.col, end.col) {
-    interval.data <- data %>% filter(
-      {{ start.col }} <= interval.ends[i],
-      {{ end.col }} >= interval.starts[i]
+  temp_f <- function(data, i = 1, start_col, end_col) {
+    interval_data <- data %>% filter(
+      {{ start_col }} <= interval_ends[i],
+      {{ end_col }} >= interval_starts[i]
     )
 
-    period.start.f <- truncate.start(interval.starts[i])
-    period.end.f <- truncate.end(interval.ends[i])
+    period_start_f <- truncate_start(interval_starts[i])
+    period_end_f <- truncate_end(interval_ends[i])
 
-    interval.data %>% mutate(
-      `Period Start` = period.start.f({{ start.col }}),
-      `Period End` = period.end.f({{ end.col }}),
-      "{by} Starting" := interval.starts[i]
+    interval_data %>% mutate(
+      `Period Start` = period_start_f({{ start_col }}),
+      `Period End` = period_end_f({{ end_col }}),
+      "{by} Starting" := interval_starts[i]
     )
   }
 
   # Produce a function to map a data set into the intervals defined, truncating
   # individual periods to interval start and end,
-  function(data, start.col, end.col) {
-    lapply(
+  function(data, start_col, end_col) {
+    .list <- lapply(
       1:k,
-      function(i) temp.f(data, i, {{ start.col }}, {{ end.col }})
-    ) %>% do.call(rbind, .)
+      function(i) temp_f(data, i, {{ start_col }}, {{ end_col }})
+    )
+
+    do.call(rbind, .list)
   }
 }
 
-DEFAULT.INTERVAL.FUNC <- interval.f()
+DEFAULT_INTERVAL_FUNC <- interval_f()

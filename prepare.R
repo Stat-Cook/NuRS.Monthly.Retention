@@ -4,6 +4,7 @@ devtools::document()
 devtools::load_all()
 
 library(DBI)
+library(progress)
 
 con <- open.connection()
 tables <- dbListTables(con)
@@ -14,7 +15,7 @@ acu <- make_monthly_acuity()
 
 mt <- make_monthly_mand_training()
 
-assign_shifts <- make_assignment_shift_aggregate()
+assign_shifts <- make_assign_shift_agg()
 
 month_assign <- make_monthly_assignment()
 

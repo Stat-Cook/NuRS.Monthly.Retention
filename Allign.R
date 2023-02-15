@@ -60,7 +60,9 @@ nurs.data <- list(
 
 joined <- reduce(nurs.data, nurs.join)%>%
   replace_na(list("Leavers" = 0))%>% 
-  inc.exc.criteria()
+  inc_exc_criteria()
+
+
 library(stringr)
 get_suffix <- function(data){
   

@@ -194,3 +194,15 @@ nurs.join <- function(x, y) {
   #' :@export
   left_join(x, y, by = c("Ward", "Year", "Month"))
 }
+
+is.missing <- function(data){
+  #'
+  apply(is.na(data), 1, any)
+}
+
+get.complete <- function(data){
+  #' 
+  #' @export
+  missing.index <- is.missing(data)
+  data[!missing.index,]
+}

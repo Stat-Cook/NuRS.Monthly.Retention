@@ -75,7 +75,7 @@ backwards.nearest <- function(values, vector) {
 
 
 merge.on.last <- function(data.frame, ref.frame, data.column, ref.column) {
-  ref.column.string <- substitute(ref.column)
+  ref.column.string <- as.character(substitute(ref.column))  
 
   bn <- backwards.nearest(
     data.frame[[data.column]],
@@ -86,7 +86,7 @@ merge.on.last <- function(data.frame, ref.frame, data.column, ref.column) {
     mutate(
       {{ ref.column.string }} := bn
     ) %>%
-    left_join(ref.frame)
+    left_join(ref.frame, by={{ref.column.string}})
 }
 
 

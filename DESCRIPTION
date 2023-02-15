@@ -11,4 +11,15 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.2
 Imports:
-  odbc
+  reshape2,
+  odbc,
+  data.table,
+  dplyr,
+  glue,
+  keyring,
+  lubridate,
+  magrittr,
+  progress,
+  purrr,
+  stringr,
+  tidyr

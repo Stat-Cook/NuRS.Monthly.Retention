@@ -19,6 +19,8 @@ open.connection <- function() {
   #' Generate a DBI connection object
   #'
   #' @importFrom odbc odbc dbConnect
+  #' @importFrom glue glue
+  #' @importFrom config get
   #' @export
   dm <- tryCatch(
     config::get(),
@@ -26,6 +28,12 @@ open.connection <- function() {
       stop("Error in config file. Run \"source('db_setup.R')\" and try again")
     }
   )
+  
+  for (name in names(dm)){
+    if (is.null(dm[[name]])){
+      warning(glue("Key `{name}` not defined.  Check config.yaml"))
+    }
+  }
 
   con <- tryCatch(
     odbc::dbConnect(

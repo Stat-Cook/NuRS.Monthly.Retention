@@ -1,11 +1,14 @@
 ######
+source('db_setup.R')
+
+
 install.packages("devtools")
 devtools::document()
 devtools::load_all()
 
 library(DBI)
 library(progress)
-
+# TODO: Add check in open connection that db and server are given
 con <- open.connection()
 tables <- dbListTables(con)
 

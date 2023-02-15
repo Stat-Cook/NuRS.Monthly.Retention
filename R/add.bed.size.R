@@ -11,7 +11,7 @@ add_bed_size <- function(data, date_column, ward) {
   #' @param ward Name of a ward (string)
   #'
   ward_beds <- pkg_env$beds.frame %>% filter(.data$Ward == ward)
-  merge.on.last(data, ward_beds, date_column, .data$`Effective From`) %>%
+  merge.on.last(data, ward_beds, date_column, `Effective From`) %>%
     select(-.data$Ward)
 }
 
@@ -33,6 +33,7 @@ add_bed_size_ws <- function(data, date_column, ward) {
     select(-.data$Ward)
 }
 
+
 add_bed_size_all <- function(data, date_column) {
   #' Add 'bed size' to data set
   #'
@@ -42,12 +43,21 @@ add_bed_size_all <- function(data, date_column) {
   #' @param data A data frame to add column to
   #' @param date.column Name of the 'Date' reference column in data
   #'
+
+  n.ward <- length(unique(data$Ward))
+  pb <- progress_bar_init(n.ward)
+
   data %>%
     group_by(.data$Ward) %>%
     group_modify(
-      function(data, grp) add_bed_size(data, {{ date_column }}, grp$Ward)
+      function(data, grp) {
+        frm <- add_bed_size(data, {{ date_column }}, grp$Ward)
+        pb$tick()
+        frm
+      }
     )
 }
+
 
 add_bed_size_all_ws <- function(data, date_column) {
   #' Add 'bed size' to data set

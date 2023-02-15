@@ -33,13 +33,24 @@ get_establishment_by_year <- function(.year, .con = pkg_env$con) {
 }
 
 
+
 make_establishment_lag3 <- function(years = 2015:2020) {
   #' Calculate establishment at lag 3
   #'
-  #' @param years vector of years to be querried across
+  #' @param years vector of years to be queried across
   #'
   #' @export
-  sw_list <- lapply(years, get_establishment_by_year)
+  #' 
+  est_pb <- progress_bar_init(max(years), min(years))
+  
+  sw_list <- lapply(
+    years, 
+    function(i) {
+      est_by_year <- get_establishment_by_year(i)
+      est_pb$tick()
+      est_by_year
+    }
+  )
   establishment_lag_3 <- do.call(rbind, sw_list)
 
   saveRDS(establishment_lag_3, "processed_data/Establishment_Lag_3.Rdata")

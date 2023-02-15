@@ -4,6 +4,9 @@
 
 acuity_score_f <- function(l0, l1a, l1b, l2, l3) {
   #' Calculate a weighted acuity score using the SNCT multipliers.
+  #' See the "Safer Nursing Care Tool - Implementation Resource Pack"
+  #' [https://www.ulh.nhs.uk/content/uploads/2015/06/shelford_group_safety_care_nursing_tool.pdf]
+  #' 
   l0 * 0.99 + l1a * 1.39 + l1b * 1.72 + l2 * 1.97 + l3 * 5.96
 }
 

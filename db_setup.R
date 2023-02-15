@@ -15,3 +15,5 @@ if(!file.exists("config.yml")){
 
 key_set("db_credentials_UID", prompt = "NuRS database username: ")
 key_set("db_credentials_PWD", prompt = "NuRS database password: ")
+
+print("Please define 'Server' and 'Database' in config.yaml")

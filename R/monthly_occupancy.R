@@ -1,6 +1,6 @@
 # Tag:Occupancy
 
-get.pas.file <- function() {
+get.pas.file <- function(con=pkg_env$con) {
   #' For generating Monthly Average Establishment
   #'
   #' @export

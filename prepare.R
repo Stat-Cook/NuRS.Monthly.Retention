@@ -6,11 +6,11 @@ install.packages("devtools")
 devtools::document()
 devtools::load_all()
 
-library(DBI)
-library(progress)
 # TODO: Add check in open connection that db and server are given
-con <- open.connection()
-tables <- dbListTables(con)
+con <- open_connection()
+tables <- DBI::dbListTables(con)
+
+nurs.connect()
 
 est3 <- make_establishment_lag3()
 
@@ -31,6 +31,7 @@ inc <- make_incident_data()
 ms <- make_monthly_sickness()
 
 admin_dis <- make_admissions_discharges()
+
 occup <- make_ward_occupancy()
 
 shifts_worked <- make_shifts_worked()

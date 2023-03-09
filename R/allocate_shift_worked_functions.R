@@ -8,7 +8,7 @@ sw_to_date <- function(values) {
   #' Cast data to date [specifically designed
   #'   for use with shifts worked data set].
   #'
-  #' @param value Vector of character values
+  #' @param values Vector of character values
   #'
   #' @importFrom lubridate as_date
   as_date(values, format = "%d/%m/%Y")
@@ -23,7 +23,7 @@ shift_worked_table <- function(.year) {
   glue("JPUH_Allocate_Shifts_Worked_Demographics_Combined_{.year}_tsv")
 }
 
-fetch_sw <- function(.year, .con = pkg_env$con) {
+fetch_sw_est <- function(.year, .con = pkg_env$con) {
   #' Get shifts worked data by year
   #'
   #' @param .year Year of data to be queried
@@ -50,14 +50,16 @@ get_establishment <- function(.year) {
   #' @importFrom magrittr %>%
   #' @importFrom dplyr mutate summarize group_by
   #'
-  fetch_sw(.year) %>%
-    mutate(Ward = .data$`Owning Unit`) %>%
-    group_by(.data$Ward, .data$`Duty Date`) %>%
+  `Owning Unit` <- Ward <- `Duty Date` <- Count <- NULL
+  
+  fetch_sw_est(.year) %>%
+    mutate(Ward = `Owning Unit`) %>%
+    group_by(Ward, `Duty Date`) %>%
     summarize(Count = n()) %>%
     group_by(
-      .data$Ward,
-      Year = year(.data$`Duty Date`),
-      Month = month(.data$`Duty Date`)
+      Ward,
+      Year = year(`Duty Date`),
+      Month = month(`Duty Date`)
     ) %>%
-    summarize(`Average Est` = mean(.data$Count))
+    summarize(`Average Est` = mean(Count))
 }

@@ -6,6 +6,10 @@ var.functions <- function(data) {
   #' 2. Variance within shifts of staffing.
   #'
   #' @param data A data frame with fields: 'Ward', 'Year', 'Month' and 'Shift Type'
+  #' 
+  
+  Ward <- Year <- Month <- `Shift Type` <- NULL
+
   averages <- data %>%
     group_by(Ward, Year, Month, `Shift Type`) %>%
     summarize(
@@ -13,11 +17,11 @@ var.functions <- function(data) {
     )
 
   merged.averages <- data %>%
-    select(Ward, Year, Month, `Shift Type`) %>%
+    select("Ward", "Year", "Month", "Shift Type") %>%
     left_join(averages)
 
   ward.shift.month.ave <- tibble(merged.averages) %>%
-    select(-c(Ward, Year, Month, `Shift Type`))
+    select(-c("Ward", "Year", "Month", "Shift Type"))
 
   ward.shift.month.ave.subtract <- select(
     tibble(data),
@@ -25,7 +29,7 @@ var.functions <- function(data) {
   ) - ward.shift.month.ave
 
   de.meaned <- data %>%
-    select(Ward, `Shift Type`, Date) %>%
+    select("Ward", "Shift Type", "Date") %>%
     cbind(ward.shift.month.ave.subtract)
 
   list(

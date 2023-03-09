@@ -21,6 +21,7 @@ one.hot.encode <- function(data, column) {
   #' @param column A column of data to encode.
   #'
   #' @importFrom tidyr spread
+  .value <- NULL
   data %>%
     mutate(.value = 1) %>%
     mutate("{column}" := paste(column, .data[[column]], sep = ".")) %>%
@@ -56,13 +57,16 @@ to.chunks <- function(data, chunk.size = 1e4) {
     split(splits)
 }
 
-
 fetch.swd <- function(year, .con = pkg_env$con) {
   #' Get shifts worked data for a given year, and mark where values are missing due to
   #' scrambler
   #'
   #' @param year Numeric year of data to convert
   #' @param .con A DBI connection object
+  #' 
+  
+  # Define dplyr local variables
+  `Shift Type` <- `Duty Date` <- `Owning Unit`  <- NULL
 
   new <- glue("JPUH_Allocate_Shifts_Worked_Demographics_Combined_{year}_tsv")
   frm <- tbl(.con, new) %>%
@@ -133,6 +137,7 @@ process.swd <- function(frm) {
   #' @param frm A data frame of shifts worked demographics
   #'
   #' @importFrom purrr map
+  #' @importFrom plyr rbind.fill
 
   chunked.frm <- frm %>% to.chunks(5e3)
 
@@ -141,11 +146,11 @@ process.swd <- function(frm) {
     ~ encode.all.demos(., demographic.cols)
   )
 
-  combined <- plyr::rbind.fill(chunked.encoded)
+  combined <- rbind.fill(chunked.encoded)
   combined[is.na(combined)] <- 0
 
   .cols <- combined %>%
-    select(-model.cols, -PK) %>%
+    select(-model.cols, -"PK") %>%
     colnames()
   combined <- combined[c(model.cols, sort(.cols))]
 
@@ -155,6 +160,7 @@ process.swd <- function(frm) {
 
 get_demographic_data <- function() {
   #' Fetch and clean demographics data and cache to file.
+  #' @importFrom plyr rbind.fill
 
   swd.list <- lapply(2015:2020, fetch.swd)
 
@@ -163,7 +169,7 @@ get_demographic_data <- function() {
   process.swd.list <- lapply(swd.clean.demos.list, process.swd)
 
   {
-    process.swd <- plyr::rbind.fill(process.swd.list)
+    process.swd <- rbind.fill(process.swd.list)
     process.swd[is.na(process.swd)] <- 0
   }
 
@@ -177,6 +183,7 @@ make_demographics <- function() {
   #' Produce the monthly lagged demographics data set having reduced demographic cardinality.
   #'
   #' @export
+  #' @importFrom tidyselect where
 
   if (!file.exists("processed_data/SWD_Raw.RData")) {
     demos <- get_demographic_data()
@@ -184,6 +191,8 @@ make_demographics <- function() {
     demos <- readRDS("processed_data/SWD_Raw.RData")
   }
 
+  `Owning Unit` <- Ward <- 
+    Year <- Month <- LagedDate <- NULL
 
   lagged.demographic.f <- function(window) {
     month.demos <- demos %>%
@@ -212,7 +221,7 @@ make_demographics <- function() {
     )
 
     demo.proportions <- cbind(
-      select(month.demos, Ward, Year, Month),
+      select(month.demos, "Ward", "Year", "Month"),
       do.call(cbind, month.prop.demos.list)
     )
 
@@ -266,11 +275,16 @@ make_annual_demographics <- function() {
     demos <- readRDS("processed_data/SWD_Raw.RData")
   }
 
-
+  Ward <- `Owning Unit` <- 
+    Year <- Month <- LagedDate <-  NULL
+   
   lagged.demographic.f <- function(window) {
     month.demos <- demos %>%
       lag_data_frame("Duty Date", window) %>%
-      mutate(Ward = `Owning Unit`, Year = year(LagedDate), Month = month(LagedDate)) %>%
+      mutate(Ward = `Owning Unit`, 
+             Year = year(LagedDate), 
+             Month = month(LagedDate)
+      ) %>%
       group_by(Ward, Year, Month) %>%
       summarize(
         across(where(is.numeric), sum)
@@ -294,7 +308,7 @@ make_annual_demographics <- function() {
     )
 
     demo.proportions <- cbind(
-      select(month.demos, Ward, Year, Month),
+      select(month.demos, "Ward", "Year", "Month"),
       do.call(cbind, month.prop.demos.list)
     )
 

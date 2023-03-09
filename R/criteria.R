@@ -7,14 +7,15 @@ inc_exc_criteria <- function(data) {
   #' @param data A data frame with columns 'Year' and 'Ward'
   #'
   #' @export
+  Year <- Month <- Ward <- NULL
   data %>%
-    filter(.data$Year < 2021) %>%
-    filter(.data$Year < 2020 | .data$Month < 6) %>%
-    filter(.data$Year > 2015) %>%
-    filter(.data$Year > 2016 | .data$Month >= 8) %>%
-    filter(!str_detect(.data$Ward, "Ward 4")) %>%
-    filter(!str_detect(.data$Ward, "Discharge")) %>%
-    filter(!str_detect(.data$Ward, "CDS"))
+    filter(Year < 2021) %>%
+    filter(Year < 2020 | Month < 6) %>%
+    filter(Year > 2015) %>%
+    filter(Year > 2016 | Month >= 8) %>%
+    filter(!str_detect(Ward, "Ward 4")) %>%
+    filter(!str_detect(Ward, "Discharge")) %>%
+    filter(!str_detect(Ward, "CDS"))
 }
 
 # No voluntary leavers on Ward 4 - following up with Tim

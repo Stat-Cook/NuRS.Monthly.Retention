@@ -11,7 +11,7 @@ get_establishment_by_year <- function(.year, .con = pkg_env$con) {
   sql_table <- glue("jpuh_Allocate_Shifts_Worked_Demographics_Combined_{.year}")
 
   sw <- tbl(.con, sql_table) %>%
-    select(.data$`Owning Unit`, .data$`Duty Date`) %>%
+    select("Owning Unit", "Duty Date") %>%
     collect() %>%
     mutate(
       `Duty Date` = as.Date(.data$`Duty Date`, format = "%d/%m/%Y"),

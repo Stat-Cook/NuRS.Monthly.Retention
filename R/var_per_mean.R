@@ -2,7 +2,9 @@ var.over.mean.f <- function(var, mean) {
   #' Calculate var ratio
   #'
   #' Calculate ratio of variance and mean - allowing for singular variables.
-  #'
+  #' 
+  #' @param var Varaince of the data
+  #' @param mean Mean of the data
   if (is.na(var)) {
     return(NA)
   }
@@ -38,7 +40,7 @@ actual.within.shift.var.per.mean <- function(data, window, staff = "Registered",
 actual.within.shift.var.per.mean.loop <- function(data, grid) {
   #' Convert all within shift actual staffing variances
   #'
-  #' Converts from varaiance to variance per mean.
+  #' Converts from variance to variance per mean.
   #'
   #' @param data A data frame
   #' @param grid A frame with headings `Window`, `Staff`, `Type`.
@@ -102,7 +104,7 @@ planned.between.shift.var.per.mean.loop <- function(data, grid) {
 acuity.var.features.f <- function(data, window, feature) {
   #' Convert all raw staffing variances
   #'
-  #' Converts from varaiance to variance per mean.
+  #' Converts from variance to variance per mean.
   #'
   #' @param data A data frame
   #' @param window The lagged window of interest [str]
@@ -124,7 +126,7 @@ acuity.var.features.f <- function(data, window, feature) {
 acuity.var.features <- function(data, grid) {
   #' Convert all raw planned staffing variances
   #'
-  #' Converts from varaiance to variance per mean.
+  #' Converts from variance to variance per mean.
   #'
   #' @param data A data frame
   #' @param grid A frame with fields `Window` and `Features`

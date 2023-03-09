@@ -30,7 +30,7 @@ lagged_group <- function(data, date_col, window = 3:4, ...) {
   #' @param data The data set to be converted
   #'   NB: if no grouping variables given (`...`)
   #'   data is expected to contain a column `Ward`.
-  #' @param date.col The column of  data to treat as the date for lagging.
+  #' @param date_col The column of  data to treat as the date for lagging.
   #' @param window [optional] The number of months to lag the data by.
   #' @param ...  [optional] Columns of data to group by.  If none given -
   #'   defaults to `Ward` and the `Year`/`Month` produced by lagging `date.col`

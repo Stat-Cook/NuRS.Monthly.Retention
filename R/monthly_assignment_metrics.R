@@ -17,14 +17,14 @@ make_monthly_assignment <- function(fn = pkg_env$default_functions) {
 
   assignment.shift.overlap <- readRDS(pkg_env$allocate_shit_aggregate_file) %>%
     mutate(
-      Date = as.Date(Date)
+      Date = as.Date(.data$Date)
     )
 
   actual.total <- assignment.shift.overlap %>%
     select(contains("Actual")) %>%
     select(contains("Hours")) %>%
     as_tibble() %>%
-    select(-Ward, -Date) %>%
+    select(-c("Ward", "Date")) %>%
     apply(1, sum)
 
 
@@ -39,7 +39,7 @@ make_monthly_assignment <- function(fn = pkg_env$default_functions) {
   assignment.shift.overlap.per.bed <- assignment.shift.overlap.with.beds %>%
     mutate(across(
       all_of(c(count.cols, hours.cols)),
-      function(i) i / Beds,
+      function(i) i / .data$Beds,
       .names = "{.col} per Bed"
     )) %>%
     select(-all_of(c(count.cols, hours.cols)))
@@ -63,17 +63,17 @@ make_monthly_assignment <- function(fn = pkg_env$default_functions) {
 
 
   var.data <- assignment.shift.overlap.per.bed %>%
-    mutate(Year = year(Date), Month = month(Date)) %>%
+    mutate(Year = year(.data$Date), Month = month(.data$Date)) %>%
     var.functions()
 
   temp <- var.data$averages %>%
-    group_by(Ward, Year, Month) %>%
+    group_by(.data$Ward, .data$Year, .data$Month) %>%
     summarize(n = n())
 
   temp[temp$n == 5, ]
   mean(temp$n == 1)
 
-  var.data$averages %>% filter(Ward == "CDS", Year == 2020)
+  var.data$averages %>% filter(.data$Ward == "CDS", .data$Year == 2020)
 
   between.var.f <- process_across_f(
     var.data$averages, "Date",

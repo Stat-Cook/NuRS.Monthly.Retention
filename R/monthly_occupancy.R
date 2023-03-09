@@ -1,8 +1,11 @@
 # Tag:Occupancy
 
+
+
 get.pas.file <- function(con=pkg_env$con) {
   #' For generating Monthly Average Establishment
   #'
+  #' @param con `DBIConnection` object pointed to database
   #' @export
   #'
   #' @importFrom magrittr %>%
@@ -11,23 +14,28 @@ get.pas.file <- function(con=pkg_env$con) {
 
   if (!file.exists(pas.file)) {
     pas.ws <- tbl(con, "pas_wardstays") %>% collect()
-    colnames(pas.ws) <- c("Hospital_Provider_Spell_No", "PatientID", "StartDate", "EndDate", "Ward")
+    colnames(pas.ws) <- c("Hospital_Provider_Spell_No", 
+                          "PatientID", "StartDate", "EndDate", "Ward")
 
-    pas.by.month <- DEFAULT_INTERVAL_FUNC(pas.ws, StartDate, EndDate)
+    pas.by.month <- DEFAULT_INTERVAL_FUNC(pas.ws, .data$StartDate, 
+                                          .data$EndDate)
 
     pas.monthly <- pas.by.month %>%
-      mutate(Ward = pas_to_allocate(Ward)) %>%
-      filter(Ward %in% unlist(pas_to_allocate_list)) %>%
+      mutate(Ward = pas_to_allocate(.data$Ward)) %>%
+      filter(.data$Ward %in% unlist(pas_to_allocate_list)) %>%
       mutate(
-        `Relative Stay in Days` = as.double(`Period End` - `Period Start`, "days"),
-        Year = year(`Month Starting`),
-        Month = month(`Month Starting`)
+        `Relative Stay in Days` = as.double(
+          .data$`Period End` - .data$`Period Start`, "days"
+        ),
+        Year = year(.data$`Month Starting`),
+        Month = month(.data$`Month Starting`)
       )
 
     pas.days.occupied <- pas.monthly %>%
-      group_by(Ward, `Month Starting`) %>%
-      summarise(`Days Used` = sum(`Relative Stay in Days`)) %>%
-      mutate(Year = year(`Month Starting`), Month = month(`Month Starting`))
+      group_by(.data$Ward, .data$`Month Starting`) %>%
+      summarise(`Days Used` = sum(.data$`Relative Stay in Days`)) %>%
+      mutate(Year = year(.data$`Month Starting`), 
+             Month = month(.data$`Month Starting`))
 
     saveRDS(pas.days.occupied, pas.file)
   } else {

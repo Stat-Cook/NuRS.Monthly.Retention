@@ -12,10 +12,10 @@ credential_prompt <- function() {
   key_set("db_credentials_UID", prompt = "NuRS database username: ")
   key_set("db_credentials_PWD", prompt = "NuRS database password: ")
 
-  pkg_env$con <- open.connection()
+  pkg_env$con <- open_connection()
 }
 
-open.connection <- function() {
+open_connection <- function() {
   #' Generate a DBI connection object
   #'
   #' @importFrom odbc odbc dbConnect

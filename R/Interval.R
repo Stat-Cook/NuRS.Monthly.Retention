@@ -1,14 +1,22 @@
 # Tag:Date
 
 truncate_start <- function(interval_start) {
+  #' Function factory - limit vector to a minimum
+  #' 
+  #' @param interval_start Lower bound of interval
+  #' @importFrom data.table fifelse
   function(vals) {
-    data.table::fifelse(vals > interval_start, vals, interval_start)
+    fifelse(vals > interval_start, vals, interval_start)
   }
 }
 
 truncate_end <- function(interval_end) {
+  #' Function factory - limit vector to a maximum
+  #' 
+  #' @param interval_end Upper bound of interval
+  #' @importFrom data.table fifelse
   function(vals) {
-    data.table::fifelse(vals > interval_end, interval_end, vals)
+    fifelse(vals > interval_end, interval_end, vals)
   }
 }
 
@@ -17,7 +25,16 @@ interval_f <- function(start_date = "2015-01-01",
                        end_date = "2021-12-01",
                        by = "Month",
                        inclusive = TRUE) {
+  
+  #' Data to intervals function factory.
+  #' 
+  #' @param start_date Start of first interval
+  #' @param end_date End of last interval
+  #' @param by Width of intervals
+  #' @param inclusive inclusive of end_date or not
+  #' 
   #' @importFrom magrittr %>%
+  #' @importFrom utils head tail 
 
   # Define start and end points as datetimes
   start_POSIXct <- as.POSIXct(start_date)

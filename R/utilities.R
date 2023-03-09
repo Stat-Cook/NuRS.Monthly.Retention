@@ -1,3 +1,6 @@
+globalVariables(c(":=", "."))
+
+
 make.default.functions <- function() {
   #' Produce a list of default functions
   list(
@@ -18,7 +21,7 @@ make.folders <- function() {
 
 process_across_f <- function(data, date.col,
                              .cols = everything(),
-                             .fn = default.fn) {
+                             .fn = make.default.functions()) {
   #' Function factory for lagging data
   #'
   #' Produce a template function designed for applying a lagging transform
@@ -196,13 +199,39 @@ nurs.join <- function(x, y) {
 }
 
 is.missing <- function(data){
+  #' Check which rows have missing data
+  #'
+  #' @param data A data frame
   #'
   apply(is.na(data), 1, any)
 }
 
 get.complete <- function(data){
   #' 
+  #' Select only rows of the data set which have no missing  values
+  #' 
+  #' @param data A data frame
+  #' 
   #' @export
   missing.index <- is.missing(data)
   data[!missing.index,]
+}
+
+nurs.connect <- function(){
+  #' Initialize package environment sql connection
+  #' 
+  #' @export
+  pkg_env$con <- open_connection()
+}
+
+tbl.unconnected <- function(src, ...){
+  #' Implement error if DB connection isnt open.
+  #'
+  #' @inheritParams dplyr::tbl
+  #' @export
+  #' @importFrom rlang abort
+  #' 
+  
+  msg <- "Connection not yet established.  Run nurs.connect() to rectify."
+  stop(msg)
 }

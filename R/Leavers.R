@@ -7,11 +7,15 @@ get_leavers <- function(sql_table = LEAVERS_SQL_TABLE, .con = pkg_env$con) {
   #' Query list of leavers from 'staging' data base
   #'
   #' @param sql_table Name of data set in database
+  #' @param .con `DBIConnection` pointed to database
   #'
+  `Termination Month` <- Organisation <-  NULL
+  
   tbl(.con, sql_table) %>%
     collect() %>%
     mutate(
-      `Termination Month` = as.Date(paste(`Termination Month`, "01", sep = "-")),
+      `Termination Month` = as.Date(paste(
+        `Termination Month`, "01", sep = "-")),
       Ward = esr_to_allocate(Organisation),
       Year = year(`Termination Month`),
       Month = month(`Termination Month`)
@@ -19,7 +23,6 @@ get_leavers <- function(sql_table = LEAVERS_SQL_TABLE, .con = pkg_env$con) {
     add.establishment(`Termination Month`)
 }
 
-sql_table <- LEAVERS_SQL_TABLE
 make_voluntary_outcome <- function(sql_table = LEAVERS_SQL_TABLE) {
   #'
   #' Step
@@ -32,21 +35,27 @@ make_voluntary_outcome <- function(sql_table = LEAVERS_SQL_TABLE) {
   #'
   #' @export
   #' @importFrom tidyr replace_na
+  #' @importFrom dplyr summarize
+
+  `Leaving Reason` <- `Staff Group` <- Date <-  
+    Ward <- Year <- Month <- Count <- NULL
   leavers <- get_leavers(sql_table)
 
   voluntary.resignation <- leavers %>%
     filter(str_detect(`Leaving Reason`, "Voluntary Resignation")) %>%
     filter(`Staff Group` == "Nursing and Midwifery Registered") %>%
     group_by(Ward, Year, Month) %>%
-    dplyr::summarize(Leavers = sum(Count))
+    summarize(Leavers = sum(Count))
 
 
   vr.all.months <- voluntary.resignation %>%
-    mutate(Date = as.Date(paste(Year, Month, "01", sep = "-"))) %>%
+    mutate(Date = as.Date(paste(
+      Year, Month, "01", sep = "-"))) %>%
     all.ward.month.merge() %>%
-    mutate(Year = year(Date), Month = month(Date)) %>%
+    mutate(Year = year(Date), 
+           Month = month(Date)) %>%
     replace_na(list("Leavers" = 0)) %>%
-    select(-Date)
+    select(-"Date")
 
   saveRDS(vr.all.months, "processed_data/Voluntary_Resignation.Rdata")
   vr.all.months
@@ -63,6 +72,9 @@ make_voluntary_leavers <- function(sql_table = LEAVERS_SQL_TABLE) {
   #' @export
   leavers <- get_leavers(sql_table)
 
+  Ward <- `Termination Month` <- `Leaving Reason` <- Count <-
+    `Average Est` <- `Leavers per Average Est` <- NULL
+  
   ward.month.leavers <- leavers %>%
     group_by(Ward, `Termination Month`, `Leaving Reason`) %>%
     summarize(Count = sum(Count)) %>%
@@ -72,7 +84,10 @@ make_voluntary_leavers <- function(sql_table = LEAVERS_SQL_TABLE) {
   leavers.count.f <- ward.month.leavers %>%
     filter(Ward != "Unknown") %>%
     mutate(`Leavers per Average Est` = Count / `Average Est`) %>%
-    process_across_f("Termination Month", `Leavers per Average Est`, list(`per Month` = mean))
+    process_across_f("Termination Month", 
+                     `Leavers per Average Est`, 
+                     list(`per Month` = mean)
+    )
 
   {
     leavers.laged <- lagged_process(leavers.count.f)
@@ -95,6 +110,9 @@ make_all_leavers <- function(sql_table = LEAVERS_SQL_TABLE) {
   #' @param sql_table Name of data set in database
   #' @export
   leavers <- get_leavers(sql_table)
+  
+  Ward <- `Termination Month` <- `Leaving Reason` <- 
+    Count <- `Average Est` <- `Voluntary Leavers per Average Est` <- NULL
 
   ward.month.leavers <- leavers %>%
     group_by(Ward, `Termination Month`, `Leaving Reason`) %>%
@@ -104,8 +122,11 @@ make_all_leavers <- function(sql_table = LEAVERS_SQL_TABLE) {
   leavers.voluntary.count.f <- ward.month.leavers %>%
     filter(Ward != "Unknown") %>%
     filter(str_detect(`Leaving Reason`, "Voluntary Resignation")) %>%
-    mutate(`Voluntary Leavers per Average Est` = Count / `Average Est`) %>%
-    process_across_f("Termination Month", `Voluntary Leavers per Average Est`, list(`per Month` = mean))
+    mutate(`Voluntary Leavers per Average Est` = 
+             Count / `Average Est`) %>%
+    process_across_f("Termination Month", 
+                     `Voluntary Leavers per Average Est`, 
+                     list(`per Month` = mean))
 
   {
     leavers.voluntary.laged <- lagged_process(leavers.voluntary.count.f)

@@ -7,9 +7,9 @@ status_f <- function(delta_reg, delta_unreg, delta_other) {
   #' Rules for deciding if a shift had 'Over', 'Under', 'Fully', or 'Mixed'
   #' staffing
   #'
-  #' @param deltra_reg Change in staffing from planned for registered staff
-  #' @param deltra_runeg Change in staffing from planned for unregistered staff
-  #' @param deltra_other Change in staffing from planned for other staff
+  #' @param delta_reg Change in staffing from planned for registered staff
+  #' @param delta_unreg Change in staffing from planned for unregistered staff
+  #' @param delta_other Change in staffing from planned for other staff
   #'
   #'
   signs <- sapply(c(delta_reg, delta_unreg, delta_other), sign)
@@ -51,32 +51,44 @@ make_assign_shift_agg <- function(sql_table = "JPUH_Allocate_Assignment_Combined
   #'
   #' @importFrom stringr str_detect
 
+  `Unit Name` <- Ward <- NULL
+  
   assignment <- tbl(pkg_env$con, sql_table) %>%
     collect() %>%
-    mutate(Ward = .data$`Unit Name`) %>%
-    filter(.data$Ward %in% esr_to_allocate_list)
+    mutate(Ward = `Unit Name`) %>%
+    filter(Ward %in% esr_to_allocate_list)
+  
+  Date <- Status <- NULL
+  
+  `Actual Registered Count` <- `Planned Registered Count` <- NULL
+  `Actual Unregistered Count` <- `Planned Unregistered Count` <- NULL
+  `Actual Other Count` <- `Planned Other Count` <- NULL
+  
+  `Actual Registered Hours` <- `Planned Registered Hours` <- NULL
+  `Actual Unregistered Hours` <- `Planned Unregistered Hours` <- NULL
+  `Actual Other Hours` <- `Planned Other Hours` <- NULL
 
   assignment <- assignment %>%
     mutate(
-      Date = as.Date(.data$Date),
-      `Over Staffed` = as.numeric(.data$Status == "Over Staffed"),
-      `Under Staffed` = as.numeric(.data$Status == "Under Staffed"),
-      `Mixed Staffed` = as.numeric(.data$Status == "Mixed"),
-      `Fully Staffed` = as.numeric(.data$Status == "Full Staffed"),
-      `Delta Registered Count` =
-        .data$`Actual Registered Count` - .data$`Planned Registered Count`,
+      Date = as.Date(Date),
+      `Over Staffed` = as.numeric(Status == "Over Staffed"),
+      `Under Staffed` = as.numeric(Status == "Under Staffed"),
+      `Mixed Staffed` = as.numeric(Status == "Mixed"),
+      `Fully Staffed` = as.numeric(Status == "Full Staffed"),
+      `Delta Registered Count` = 
+        `Actual Registered Count` - `Planned Registered Count`,
       `Delta Unregistered Count` =
-        .data$`Actual Unregistered Count` - .data$`Planned Unregistered Count`,
+        `Actual Unregistered Count` - `Planned Unregistered Count`,
       `Delta Other Count` =
-        .data$`Actual Other Count` - .data$`Planned Other Count`,
+        `Actual Other Count` - `Planned Other Count`,
       `Delta Registered Hours` =
-        .data$`Actual Registered Hours` - .data$`Planned Registered Hours`,
+        `Actual Registered Hours` - `Planned Registered Hours`,
       `Delta Unregistered Hours` =
-        .data$`Actual Unregistered Hours` - .data$`Planned Unregistered Hours`,
+        `Actual Unregistered Hours` - `Planned Unregistered Hours`,
       `Delta Other Hours` =
-        .data$`Actual Other Hours` - .data$`Planned Other Hours`
+        `Actual Other Hours` - `Planned Other Hours`
     ) %>%
-    select(-.data$`Red Flag Count`)
+    select(-"Red Flag Count")
 
   cols <- colnames(assignment)
 
@@ -84,11 +96,11 @@ make_assign_shift_agg <- function(sql_table = "JPUH_Allocate_Assignment_Combined
     cols[str_detect(cols, "Count")],
     cols[str_detect(cols, "Hours")]
   )
-
+  Ward <- Date <- `Shift Type` <- NULL
   assignment_shift_f <- function(.year) {
     assignment %>%
-      filter(year(.data$Date) == .year) %>%
-      group_by(.data$Ward, .data$Date, .data$`Shift Type`) %>%
+      filter(year(Date) == .year) %>%
+      group_by(Ward, Date, `Shift Type`) %>%
       summarize(
         across(
           all_of(staff_cols),
@@ -101,20 +113,23 @@ make_assign_shift_agg <- function(sql_table = "JPUH_Allocate_Assignment_Combined
     2015:2020,
     assignment_shift_f
   )
+  
+  `Delta Registered Hours` <- `Delta Unregistered Hours` <- 
+    `Delta Other Hours` <-  NULL
 
   assignment_shift_overlap <- do.call(rbind, assignment_shift_overlap_list) %>%
     mutate(
       Status = status_vec(
-        .data$`Delta Registered Hours`,
-        .data$`Delta Unregistered Hours`,
-        .data$`Delta Other Hours`
+        `Delta Registered Hours`,
+        `Delta Unregistered Hours`,
+        `Delta Other Hours`
       )
     ) %>%
     mutate(
-      `Over Staffed` = (.data$Status == "Over Staffed"),
-      `Under Staffed` = (.data$Status == "Under Staffed"),
-      `Fully Staffed` = (.data$Status == "Fully Staffed"),
-      `Mixed` = (.data$Status == "Mixed")
+      `Over Staffed` = (Status == "Over Staffed"),
+      `Under Staffed` = (Status == "Under Staffed"),
+      `Fully Staffed` = (Status == "Fully Staffed"),
+      `Mixed` = (Status == "Mixed")
     ) %>%
     int.to.double()
 

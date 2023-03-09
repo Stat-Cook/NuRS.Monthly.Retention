@@ -60,6 +60,11 @@ monthly.sickness.f2 <- function(df, month.start, month.end) {
 
   check.mstart.f <- check.mstart(month.start)
   check.mend.f <- check.mend(month.end)
+  
+  `Absence Start Date` <- `Absence End Date` <- 
+    `Last Day` <- `First Day` <- `FTE Days Lost` <- 
+    `Relative Days Lost` <-  `Absence Length (Days)` <- 
+    `Month Starting` <- NULL
 
   month.data <- month.data %>%
     mutate(
@@ -67,7 +72,8 @@ monthly.sickness.f2 <- function(df, month.start, month.end) {
       `Last Day` = check.mend.f(`Absence End Date`),
       `Month Starting` = month.start,
       `Relative Days Lost` = `Last Day` - `First Day` + 1,
-      `Prorata FTE Lost` = `FTE Days Lost` * `Relative Days Lost` / `Absence Length (Days)`,
+      `Prorata FTE Lost` = `FTE Days Lost` * `Relative Days Lost` / 
+        `Absence Length (Days)`,
       Year = year(`Month Starting`),
       Month = month(`Month Starting`)
     )
@@ -76,7 +82,7 @@ monthly.sickness.f2 <- function(df, month.start, month.end) {
 }
 
 sickness.windows <- function(data, month.starts, month.ends) {
-  #' Produce month-ward sickenss data
+  #' Produce month-ward sickness data
   #'
   #' Run `monthly.sickness.f2` across pairs of month-start/-end values
   #'
@@ -97,10 +103,18 @@ make_monthly_sickness <- function(sql_table = "jpuh_ESR_Sickness_processed") {
   #' @param sql_table Sql database name.
   #'
   #' @export
+  #' @importFrom stats IQR sd var
+  #' @importFrom lubridate ddays
   #'
-  #'
+  
+  `Absence Start Date` <- `Absence End Date` <- 
+    `Last Day` <- `First Day` <- `FTE Days Lost` <- 
+    `Relative Days Lost` <-  `Absence Length (Days)` <- 
+    `Month Starting` <- Organisation <- Year <- Month <- NULL
+  
   sick <- tbl(pkg_env$con, sql_table) %>%
-    select(Organisation, `Absence End Date`, `Absence Start Date`, `FTE Days Lost`) %>%
+    select("Organisation", "Absence End Date", 
+           "Absence Start Date", "FTE Days Lost") %>%
     collect() %>%
     mutate(
       `Absence Start Date` = as.Date(`Absence Start Date`),
@@ -109,6 +123,9 @@ make_monthly_sickness <- function(sql_table = "jpuh_ESR_Sickness_processed") {
       `Absence Length (Days)` = `Absence Length (Days)` + 1
     ) %>%
     filter(Organisation %in% names(esr_to_allocate_list))
+  
+  `Prorata FTE Lost per Establishment` <- `Prorata FTE Lost` <-  
+    `Average Est` <- NULL
 
   monthly.sickness <- sickness.windows(sick, pkg_env$month.starts, pkg_env$month.ends) %>%
     mutate(Ward = esr_to_allocate(Organisation)) %>%

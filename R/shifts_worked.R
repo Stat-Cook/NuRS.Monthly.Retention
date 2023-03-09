@@ -8,16 +8,18 @@ sw_to_date <- function(values) lubridate::as_date(values, format = "%d/%m/%Y")
 fetch_sw <- function(year) {
   #' Query and clean Shifts Worked data
   #'
-  #' @param year Numeric year of data to querry
+  #' @param year Numeric year of data to query
 
   allocate.wards <- unlist(esr_to_allocate_list)
+  
+  `Owning Unit` <- `Duty Date` <- NULL
 
   tbl(
     pkg_env$con,
     glue::glue("jpuh_Allocate_Shifts_Worked_Demographics_Combined_{year}")
   ) %>%
     filter(`Owning Unit` %in% allocate.wards) %>%
-    select(`Duty Date`, `Actual Work`, `Fulfilment Type`, `Owning Unit`) %>%
+    select("Duty Date", "Actual Work", "Fulfilment Type", "Owning Unit") %>%
     collect() %>%
     mutate(`Duty Date` = sw_to_date(`Duty Date`))
 }
@@ -29,6 +31,9 @@ sw.daily.f <- function(year) {
   #' @param year Numeric year of data to look up
 
   s <- fetch_sw(year)
+  
+  `Owning Unit` <- `Duty Date` <- `Fulfilment Type` <- `Actual Work` <- 
+    `Total Work` <- Ward <- Date <-  NULL
 
   daily.work <- s %>%
     mutate(Date = as.Date(`Duty Date`, format = "%d/%m/%Y")) %>%
@@ -73,12 +78,17 @@ make_shifts_worked <- function() {
 
 
   sw.daily.with.beds <- sw.daily %>% add_bed_size_all("Date")
-
+  
+  Beds <- `Total Work` <- NULL
+  
   sw.daily.per.bed <- sw.daily.with.beds %>%
     filter(!is.na(Beds)) %>%
     mutate(
       `Total Work per Bed` = `Total Work` / Beds
     )
+  
+  LagedDate <- Ward <- `Fulfilment Type`  <- 
+    Year  <- Month  <- `Total Work per Bed` <- NULL
 
   sw.f <- function(window) {
     all.fts <- lag_data_frame(sw.daily.per.bed, "Date", window) %>%
@@ -99,7 +109,7 @@ make_shifts_worked <- function() {
         all.fts %>%
           as_tibble() %>%
           filter(`Fulfilment Type` == ft) %>%
-          select(-`Fulfilment Type`) %>%
+          select(-"Fulfilment Type") %>%
           rename_with(function(i) paste(i, "Fulfilment:", ft), contains("Lag"))
       }
     )

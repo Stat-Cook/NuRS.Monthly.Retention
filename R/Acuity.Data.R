@@ -7,6 +7,11 @@ acuity_score_f <- function(l0, l1a, l1b, l2, l3) {
   #' See the "Safer Nursing Care Tool - Implementation Resource Pack"
   #' [https://www.ulh.nhs.uk/content/uploads/2015/06/shelford_group_safety_care_nursing_tool.pdf]
   #' 
+  #' @param l0 Count of `Level 0` acuity
+  #' @param l1a Count of `Level 1A` acuity
+  #' @param l1b Count of `Level 1B` acuity
+  #' @param l2 Count of `Level 2` acuity
+  #' @param l3 Count of `Level 3` acuity
   l0 * 0.99 + l1a * 1.39 + l1b * 1.72 + l2 * 1.97 + l3 * 5.96
 }
 
@@ -38,12 +43,14 @@ make_monthly_acuity <- function(sql_table = "jpuh_AllocateAcuity",
   #' @import dplyr
   #' @importFrom dplyr tbl collect mutate
   #'
+  
+  `ValidDate` <- Unit <- Name <-  NULL
   allocate <- tbl(pkg_env$con, sql_table) %>%
-    filter(.data$Name %like% "Level%") %>%
+    filter(Name %like% "Level%") %>%
     collect() %>%
     mutate(
-      ValidDate = as.Date(.data$ValidDate, format = "%d/%m/%y"),
-      Ward = .data$Unit
+      ValidDate = as.Date(ValidDate, format = "%d/%m/%y"),
+      Ward = Unit
     )
 
   pivoted_allocate <- allocate %>%
@@ -63,11 +70,14 @@ make_monthly_acuity <- function(sql_table = "jpuh_AllocateAcuity",
   pivoted_allocate_some_entered <- pivoted_allocate[!sel, ]
 
   pivoted_allocate_some_entered[is.na(pivoted_allocate_some_entered)] <- 0
+  
+  `Level 0` <- `Level 1A` <- `Level 1B` <- 
+    `Level 2` <- `Level 3` <- `Acuity Score` <- NA
 
   pivoted_allocate_some_entered <- pivoted_allocate_some_entered %>% mutate(
     `Acuity Score` = acuity_score(
-      .data$`Level 0`, .data$`Level 1A`, .data$`Level 1B`,
-      .data$`Level 2`, .data$`Level 3`
+      `Level 0`, `Level 1A`, `Level 1B`,
+      `Level 2`, `Level 3`
     )
   )
 
@@ -75,17 +85,19 @@ make_monthly_acuity <- function(sql_table = "jpuh_AllocateAcuity",
     pivoted_allocate_some_entered,
     "ValidDate"
   )
+  
+  Beds <- `Acuity Scores` <- NULL
 
   piv_allo_some_entered_per_bed <- pivoted_allocate_some_entered %>%
     mutate(
       across(
         contains("Level"),
-        function(i) i / .data$Beds,
+        function(i) i / Beds,
         .names = "{.col} per Bed"
       )
     ) %>%
     mutate(
-      `Acuity Score per Bed` = .data$`Acuity Score` / .data$Beds
+      `Acuity Score per Bed` = `Acuity Score` / Beds
     )
 
   allo_process_f <- process_across_f(
